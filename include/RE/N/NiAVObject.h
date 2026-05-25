@@ -147,6 +147,7 @@ namespace RE
 		void                              TintScenegraph(const NiColorA& a_color);
 		void                              Update(NiUpdateData& a_data);
 		void                              UpdateBodyTint(const NiColor& a_color);
+		void                              UpdateCollisionObject(bool a_arg1);
 		void                              UpdateHairColor(const NiColor& a_color);
 		void                              UpdateMaterialAlpha(float a_alpha, bool a_doOnlySkin);
 		void                              UpdateRigidConstraints(bool a_enable, std::uint8_t a_arg2 = 1, std::uint32_t a_arg3 = 1);
