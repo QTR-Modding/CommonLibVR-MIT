@@ -65,8 +65,8 @@ namespace RE
 			// members
 			NiNode*               mesh[4];              // 0000
 			float                 heights[4][289];      // 0020
-			std::int8_t           percents[4][289][6];  // 1230
-			std::int8_t           colors[4][289][3];    // 2D48
+			std::uint8_t          percents[4][289][6];  // 1230
+			std::uint8_t          colors[4][289][3];    // 2D48
 			CHAR_NORM             normals[4][289];      // 3AD4
 			NiPointer<BSTriShape> geom[4];              // 4860
 			NiPointer<BSTriShape> border;               // 4880
