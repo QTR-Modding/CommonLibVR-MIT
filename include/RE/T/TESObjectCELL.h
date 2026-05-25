@@ -200,6 +200,7 @@ namespace RE
 		bhkWorld*                           GetbhkWorld() const;
 		void                                ForEachReference(std::function<BSContainer::ForEachResult(TESObjectREFR*)> a_callback) const;
 		void                                ForEachReferenceInRange(const NiPoint3& a_origin, float a_radius, std::function<BSContainer::ForEachResult(TESObjectREFR*)> a_callback) const;
+		void                                GenerateGrass();
 		[[nodiscard]] EXTERIOR_DATA*        GetCoordinates();
 		[[nodiscard]] TESFaction*           GetFactionOwner();
 		TESObjectLAND*                      GetLandscape();
@@ -214,6 +215,7 @@ namespace RE
 		[[nodiscard]] bool                  IsExteriorCell() const;
 		[[nodiscard]] bool                  IsInteriorCell() const;
 		[[nodiscard]] BSTempEffectParticle* PlaceParticleEffect(float a_lifetime, const char* a_modelName, const NiMatrix3& a_normal, const NiPoint3& a_pos, float a_scale, std::uint32_t a_flags, NiAVObject* a_target);
+		void                                RemoveGrass();
 		void                                SetActorOwner(TESNPC* a_owner);
 		void                                SetFactionOwner(TESFaction* a_owner);
 		void                                SetFogColor(Color a_near, Color a_far);

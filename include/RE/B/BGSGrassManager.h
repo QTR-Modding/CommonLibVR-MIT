@@ -5,6 +5,8 @@
 #include "RE/B/BSTHashMap.h"
 #include "RE/B/BSTSingleton.h"
 #include "RE/N/NiSmartPointer.h"
+#include "RE/T/TESObjectCell.h"
+#include "RE/T/TES.h"
 
 namespace RE
 {
@@ -24,6 +26,49 @@ namespace RE
 		{
 			static REL::Relocation<BGSGrassManager**> singleton{ RELOCATION_ID(514292, 400452) };
 			return *singleton;
+		}
+
+		void ToggleGrass()
+		{
+			using ToggleGrass = void (*)(void);
+			REL::Relocation<ToggleGrass> func{ REL::RelocationID(0 /* SE TBD */, 22866) };
+			return func();
+		}
+
+		void RemoveAllGrass()
+		{
+			return TES::GetSingleton()->RemoveAllGrass();
+		}
+
+		void CreateAllGrass()
+		{
+			return TES::GetSingleton()->CreateAllGrass();
+		}
+
+		void RemoveGrassInCell(TESObjectCELL* cell)
+		{
+			using RemoveGrassInCell = void (*)(BGSGrassManager*, TESObjectCELL*);
+			REL::Relocation<RemoveGrassInCell> func{ REL::RelocationID(15207, 15375) };
+			return func(this, cell);
+		}
+
+		void CreateGrassInCell(TESObjectCELL* cell)
+		{
+			return cell->GenerateGrass();
+		}
+
+		void CreateGrassInCell(RE::TESObjectCELL* cell, std::uint8_t* bytePtr)
+		{
+			using GrassFunc_t = __int64 (*)(RE::BGSGrassManager* mgr, RE::TESObjectCELL* cell, std::uint8_t* bytePtr);
+			REL::Relocation<GrassFunc_t> func{ RELOCATION_ID(15204, 15372) };
+			func(this, cell, bytePtr);
+		}
+
+		void ExecuteAllGrassTasks(RE::TESObjectCELL* cell, std::int64_t flag)
+		{
+			using GrassFunc2_t = std::int64_t (*)(RE::BGSGrassManager* mgr, RE::TESObjectCELL* cell, std::int64_t flag);
+			REL::Relocation<GrassFunc2_t> func{ RELOCATION_ID(15209, 15377) };
+			func(this, cell, flag);
 		}
 
 		// members

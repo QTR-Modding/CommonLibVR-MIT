@@ -81,11 +81,13 @@ namespace RE
 		void ForEachReferenceInRange(NiPoint3 a_origin, float a_radius, std::function<BSContainer::ForEachResult(TESObjectREFR* a_ref)> a_callback);
 	
 
+		void            CreateAllGrass();
 		TESObjectCELL*  GetCell(const NiPoint3& a_position) const;
 		MATERIAL_ID     GetLandMaterialType(const NiPoint3& a_position) const;
 		bool            GetLandHeight(const NiPoint3& a_positionIn, float& a_heightOut);
 		TESLandTexture* GetLandTexture(const NiPoint3& a_position) const;
 		float           GetWaterHeight(const NiPoint3& a_pos, TESObjectCELL* a_cell) const;
+		void            RemoveAllGrass();
 		NiAVObject*     Pick(bhkPickData& a_pickData);
 		void            PurgeBufferedCells();
 

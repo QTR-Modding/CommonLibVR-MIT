@@ -32,6 +32,13 @@ namespace RE
 		});
 	}
 
+	void TESObjectCELL::GenerateGrass()
+	{
+		using func_t = decltype(&TESObjectCELL::GenerateGrass);
+		REL::Relocation<func_t> func{ RELOCATION_ID(13137, 13277) };
+		return func(this);
+	}
+
 	TESNPC* TESObjectCELL::GetActorOwner()
 	{
 		auto owner = GetOwner();
@@ -154,6 +161,17 @@ namespace RE
 		using func_t = decltype(&TESObjectCELL::PlaceParticleEffect);
 		static REL::Relocation<func_t> func{ RELOCATION_ID(29219, 30072) };
 		return func(this, a_lifetime, a_modelName, a_normal, a_pos, a_scale, a_flags, a_target);
+	}
+
+	void TESObjectCELL::RemoveGrass()
+	{
+		// Adding 
+		// #include "RE/B/BGSGrassManager.h" 
+		// here or in 
+		// TESObjectCELL.h
+		// cause build to fail
+		// 
+		//return BGSGrassManager::GetSingleton()->RemoveGrassInCell(this);
 	}
 
 	void TESObjectCELL::SetActorOwner(TESNPC* a_owner)

@@ -260,6 +260,13 @@ namespace RE
 		}
 	}
 
+	void TES::CreateAllGrass()
+	{
+		using func_t = decltype(&TES::CreateAllGrass);
+		REL::Relocation<func_t> func{ RELOCATION_ID(13189, 13335) };
+		return func(this);
+	}
+
 	TESObjectCELL* TES::GetCell(const NiPoint3& a_position) const
 	{
 		using func_t = decltype(&TES::GetCell);
@@ -306,6 +313,13 @@ namespace RE
 	{
 		using func_t = decltype(&TES::PurgeBufferedCells);
 		static REL::Relocation<func_t> func{ RELOCATION_ID(13159, 13299) };
+		return func(this);
+	}
+
+	void TES::RemoveAllGrass()
+	{
+		using func_t = decltype(&TES::RemoveAllGrass);
+		REL::Relocation<func_t> func{ RELOCATION_ID(13190, 13336) };
 		return func(this);
 	}
 }
