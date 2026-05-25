@@ -4,6 +4,7 @@
 ![Platform](https://img.shields.io/static/v1?label=platform&message=windows&color=dimgray&style=flat&logo=windows)
 [![Latest Release](https://img.shields.io/github/v/release/alandtse/CommonLibVR?logo=pkgsrc&logoColor=white)](#use)
 [![Main CI](https://github.com/alandtse/CommonLibVR/actions/workflows/main_ci.yml/badge.svg?branch=ng)](https://github.com/alandtse/CommonLibVR/actions/workflows/main_ci.yml)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/alandtse/CommonLibVR)
 
 CommonLibSSE NG is a fork of CharmedBaryon's CommonLibSSE-NG, itself a fork of CommonLibSSE, which tracks upstream updates but adds a number of enhancements.
 It supports Skyrim Special Edition (SE), Skyrim Anniversary Edition (AE), and Skyrim Virtual Reality (VR).

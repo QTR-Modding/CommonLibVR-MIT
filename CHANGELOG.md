@@ -1,3 +1,145 @@
+## [4.18.0](https://github.com/alandtse/CommonLibVR/compare/v4.17.1...v4.18.0) (2026-05-10)
+
+### Features
+
+* **BSShaderRenderTargets:** name VR slot 114 ([#150](https://github.com/alandtse/CommonLibVR/issues/150)) ([02565ab](https://github.com/alandtse/CommonLibVR/commit/02565ab9d01dd250745ab0894aedff6a288c2f2a))
+
+## [4.17.1](https://github.com/alandtse/CommonLibVR/compare/v4.17.0...v4.17.1) (2026-05-08)
+
+### Bug Fixes
+
+* **BSShadowLight:** GetIsDirectionalLight return ([#149](https://github.com/alandtse/CommonLibVR/issues/149)) ([2a5c01b](https://github.com/alandtse/CommonLibVR/commit/2a5c01b614078de99d3fa832063fa5177ea6f217))
+
+## [4.17.0](https://github.com/alandtse/CommonLibVR/compare/v4.16.0...v4.17.0) (2026-05-02)
+
+### Features
+
+* merge po3 ([529d8f2](https://github.com/alandtse/CommonLibVR/commit/529d8f27a218bcd6f8f02acf9a26b847d545cf9b))
+
+### Bug Fixes
+
+* Missing include in TutorialMenu.cpp ([34a6cec](https://github.com/alandtse/CommonLibVR/commit/34a6cecffce5abe5fcf5b36aab1339e7bd77d6bb))
+
+## [4.16.0](https://github.com/alandtse/CommonLibVR/compare/v4.15.1...v4.16.0) (2026-05-02)
+
+### Features
+
+* **VR:** identify BSVRInterface/BSOpenVR vtable ([#148](https://github.com/alandtse/CommonLibVR/issues/148)) ([24f7c39](https://github.com/alandtse/CommonLibVR/commit/24f7c39b93600e83f35615bfc2ded3cb9b717910))
+
+## [4.15.1](https://github.com/alandtse/CommonLibVR/compare/v4.15.0...v4.15.1) (2026-05-01)
+
+### Bug Fixes
+
+* add runtime data acessor for bssubindextrishape ([#147](https://github.com/alandtse/CommonLibVR/issues/147)) ([c3c3849](https://github.com/alandtse/CommonLibVR/commit/c3c3849900cb7604f71d6095799f75c88a403e4f))
+
+## [4.15.0](https://github.com/alandtse/CommonLibVR/compare/v4.14.0...v4.15.0) (2026-04-27)
+
+### Features
+
+* add GetSettingRef accessor ([b5b6ed3](https://github.com/alandtse/CommonLibVR/commit/b5b6ed35a9c04fade3ee391054eda64c048e57e0))
+
+## [4.14.0](https://github.com/alandtse/CommonLibVR/compare/v4.13.1...v4.14.0) (2026-04-12)
+
+### Features
+
+* add Actor::CalculateLOS ([#143](https://github.com/alandtse/CommonLibVR/issues/143)) ([04857f5](https://github.com/alandtse/CommonLibVR/commit/04857f53a5250d915ef9b8d9d20480be97e4c5eb))
+
+## [4.13.1](https://github.com/alandtse/CommonLibVR/compare/v4.13.0...v4.13.1) (2026-04-12)
+
+### Bug Fixes
+
+* Main members ([#144](https://github.com/alandtse/CommonLibVR/issues/144)) ([4e8a9d5](https://github.com/alandtse/CommonLibVR/commit/4e8a9d585d5182e8b5293477c52b174793c7e1fe))
+
+## [4.13.0](https://github.com/alandtse/CommonLibVR/compare/v4.12.0...v4.13.0) (2026-04-09)
+
+### Features
+
+* add re from enginefixes ng porting ([#142](https://github.com/alandtse/CommonLibVR/issues/142)) ([e4e8609](https://github.com/alandtse/CommonLibVR/commit/e4e8609af47c75045b7345434064edf42397975f))
+
+### Bug Fixes
+
+* handle includeLength<0 context hooks with correct public RIP ([#139](https://github.com/alandtse/CommonLibVR/issues/139)) ([01d2af7](https://github.com/alandtse/CommonLibVR/commit/01d2af79d2cf0f9b7fe2944213acdc06c8e6e9ac))
+* **VR:** use atomics for lazy esl ([#141](https://github.com/alandtse/CommonLibVR/issues/141)) ([bbe0f49](https://github.com/alandtse/CommonLibVR/commit/bbe0f4911313a884e535d7d3bf45ed5ec4f0ba9d))
+
+## [4.12.0](https://github.com/alandtse/CommonLibVR/compare/v4.11.0...v4.12.0) (2026-04-08)
+
+### Features
+
+* **VR:** allow lazy loading of esl datahandler ([#140](https://github.com/alandtse/CommonLibVR/issues/140)) ([7df3e9c](https://github.com/alandtse/CommonLibVR/commit/7df3e9cb88f4285fccc6b9342cef48b52055fa0f))
+
+## [4.11.0](https://github.com/alandtse/CommonLibVR/compare/v4.10.0...v4.11.0) (2026-04-02)
+
+### Features
+
+* RE ImageSpaceManager and TESWaterSystem ([41fa218](https://github.com/alandtse/CommonLibVR/commit/41fa2184cd99c1676015c0afead70db1f450c9df))
+* RE NavMesh ([bae6765](https://github.com/alandtse/CommonLibVR/commit/bae6765d340d07c30e0b2230d7c613e61f937e5f))
+
+## [4.10.0](https://github.com/alandtse/CommonLibVR/compare/v4.9.0...v4.10.0) (2026-03-26)
+
+### Features
+
+* Improved NiPick a bit more, added helpful comments to some members ([bb18ccd](https://github.com/alandtse/CommonLibVR/commit/bb18ccdba4760b749a0bd7f6659e5495b6cfca38))
+* merge po3 ([1160f62](https://github.com/alandtse/CommonLibVR/commit/1160f628e01c6db386071e8642c56add36fdd8c9))
+* RE NiPick more ([a3829d4](https://github.com/alandtse/CommonLibVR/commit/a3829d497258bcbc90b8858fc2b5fb1d057ec549))
+
+## [4.9.0](https://github.com/alandtse/CommonLibVR/compare/v4.8.2...v4.9.0) (2026-03-23)
+
+### Features
+
+* add contexthook ([90a8f2f](https://github.com/alandtse/CommonLibVR/commit/90a8f2fe590025ccfeee5a7e1d33c352ea1764d8))
+
+## [4.8.2](https://github.com/alandtse/CommonLibVR/compare/v4.8.1...v4.8.2) (2026-03-22)
+
+### Bug Fixes
+
+* shadowscenenode multiruntime support ([f9734d9](https://github.com/alandtse/CommonLibVR/commit/f9734d9df06ac4b2c5bb069a17ca5081c882919b))
+
+## [4.8.1](https://github.com/alandtse/CommonLibVR/compare/v4.8.0...v4.8.1) (2026-03-22)
+
+### Bug Fixes
+
+* **VR:** BSInputDevice offsets ([#135](https://github.com/alandtse/CommonLibVR/issues/135)) ([cf14a90](https://github.com/alandtse/CommonLibVR/commit/cf14a90c47c4f44b5b7874b11261a9feddda3965)), closes [#134](https://github.com/alandtse/CommonLibVR/issues/134) [#86](https://github.com/alandtse/CommonLibVR/issues/86)
+
+## [4.8.0](https://github.com/alandtse/CommonLibVR/compare/v4.7.1...v4.8.0) (2026-03-19)
+
+### Features
+
+* add more RE for shadow rendering ([fcbbd51](https://github.com/alandtse/CommonLibVR/commit/fcbbd515fef472447e6b77e06a53453529e1c322))
+
+## [4.7.1](https://github.com/alandtse/CommonLibVR/compare/v4.7.0...v4.7.1) (2026-03-15)
+
+### Bug Fixes
+
+* **VR:** update ShadowmapDescriptor ([1ba6ce7](https://github.com/alandtse/CommonLibVR/commit/1ba6ce7e5cd9695c3027e0907e42e445027a89f9))
+
+## [4.7.0](https://github.com/alandtse/CommonLibVR/compare/v4.6.1...v4.7.0) (2026-03-12)
+
+### Features
+
+* add NiSourceTexture::resourceStream ([e34303c](https://github.com/alandtse/CommonLibVR/commit/e34303c7a88e2065d4da475f208c776e8be79500))
+
+## [4.6.1](https://github.com/alandtse/CommonLibVR/compare/v4.6.0...v4.6.1) (2026-03-06)
+
+### Bug Fixes
+
+* BSShader, Renderer, RendererShadowState ([9cf0f72](https://github.com/alandtse/CommonLibVR/commit/9cf0f72222664d1a6d9d131196cd93e3df91081d))
+
+## [4.6.0](https://github.com/alandtse/CommonLibVR/compare/v4.5.1...v4.6.0) (2026-03-06)
+
+### Features
+
+* add hkaSkeleton, hkaBone, and BSFlattenedBoneTree classes ([86d00ed](https://github.com/alandtse/CommonLibVR/commit/86d00ed7009176e536543aceb871b48305a150b6))
+* add hkLocalFrame classes and hkaSkeleton destructor ([1b9e5ce](https://github.com/alandtse/CommonLibVR/commit/1b9e5ceff16c9866aaf72503ccbd24e544dfda26))
+* add hkLocalFrame headers to Skyrim.h (woops) ([3e5675c](https://github.com/alandtse/CommonLibVR/commit/3e5675c5933c75116a6f4341cc0fe056d6409a06))
+* merge po3 ([a57a760](https://github.com/alandtse/CommonLibVR/commit/a57a760c4b4ad970c567261afd2c0753f67daeb9))
+
+## [4.5.1](https://github.com/alandtse/CommonLibVR/compare/v4.5.0...v4.5.1) (2026-03-05)
+
+### Bug Fixes
+
+* **VR:** light Accumulate signature ([9ce75a5](https://github.com/alandtse/CommonLibVR/commit/9ce75a538af8990d6f2b02304cbb58540fb77a4c))
+* **VR:** NiCamera RE ([00b0142](https://github.com/alandtse/CommonLibVR/commit/00b01426962634a98f5f0044aa1dd1a9141b6fc9))
+
 ## [4.5.0](https://github.com/alandtse/CommonLibVR/compare/v4.4.0...v4.5.0) (2026-03-03)
 
 ### Features

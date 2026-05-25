@@ -3,6 +3,7 @@ set(SOURCES
 	include/RE/A/AIProcess.h
 	include/RE/A/AITimeStamp.h
 	include/RE/A/AITimer.h
+	include/RE/A/AStarNode.h
 	include/RE/A/AbsorbEffect.h
 	include/RE/A/AbstractHeap.h
 	include/RE/A/AccumulatingValueModifierEffect.h
@@ -257,8 +258,10 @@ set(SOURCES
 	include/RE/B/BSFaceGenNiNode.h
 	include/RE/B/BSFadeNode.h
 	include/RE/B/BSFadeNodeCuller.h
+	include/RE/B/BSFastNavmeshTriLocation.h
 	include/RE/B/BSFile.h
 	include/RE/B/BSFixedString.h
+	include/RE/B/BSFlattenedBoneTree.h
 	include/RE/B/BSFurnitureMarkerNode.h
 	include/RE/B/BSGameSound.h
 	include/RE/B/BSGamepadDevice.h
@@ -322,6 +325,7 @@ set(SOURCES
 	include/RE/B/BSMusicManager.h
 	include/RE/B/BSNavmesh.h
 	include/RE/B/BSNavmeshInfoMap.h
+	include/RE/B/BSNavmeshSearch.h
 	include/RE/B/BSNiAllocator.h
 	include/RE/B/BSNiNode.h
 	include/RE/B/BSOcclusionBox.h
@@ -628,6 +632,7 @@ set(SOURCES
 	include/RE/C/CombatMagicCasterWard.h
 	include/RE/C/CombatManager.h
 	include/RE/C/CombatMeleeAimController.h
+	include/RE/C/CombatNavmeshSearch.h
 	include/RE/C/CombatObject.h
 	include/RE/C/CombatPath.h
 	include/RE/C/CombatSearchLocation.h
@@ -642,6 +647,7 @@ set(SOURCES
 	include/RE/C/CommandTable.h
 	include/RE/C/CommonTypeTraits.h
 	include/RE/C/CompactingStore.h
+	include/RE/C/Compass.h
 	include/RE/C/CompiledScriptLoader.h
 	include/RE/C/CompressedArchiveStream.h
 	include/RE/C/ConcreteFormFactory.h
@@ -1102,6 +1108,8 @@ set(SOURCES
 	include/RE/H/hkContainerAllocators.h
 	include/RE/H/hkFinishLoadedObjectFlag.h
 	include/RE/H/hkLifoAllocator.h
+	include/RE/H/hkLocalFrame.h
+	include/RE/H/hkLocalFrameGroup.h
 	include/RE/H/hkMatrix3.h
 	include/RE/H/hkMemoryAllocator.h
 	include/RE/H/hkMemoryRouter.h
@@ -1115,6 +1123,7 @@ set(SOURCES
 	include/RE/H/hkRefVariant.h
 	include/RE/H/hkReferencedObject.h
 	include/RE/H/hkRotation.h
+	include/RE/H/hkSimpleLocalFrame.h
 	include/RE/H/hkSmallArray.h
 	include/RE/H/hkSseMathTypes.h
 	include/RE/H/hkStepInfo.h
@@ -1127,8 +1136,10 @@ set(SOURCES
 	include/RE/H/hkaAnimationBinding.h
 	include/RE/H/hkaAnimationControl.h
 	include/RE/H/hkaAnnotationTrack.h
+	include/RE/H/hkaBone.h
 	include/RE/H/hkaDefaultAnimationControl.h
 	include/RE/H/hkaRagdollInstance.h
+	include/RE/H/hkaSkeleton.h
 	include/RE/H/hkaSplineCompressedAnimation.h
 	include/RE/H/hkbAnimationBindingSet.h
 	include/RE/H/hkbAssetBundleStringData.h
@@ -1157,6 +1168,7 @@ set(SOURCES
 	include/RE/H/hkbVariableInfo.h
 	include/RE/H/hkbVariableValueSet.h
 	include/RE/H/hkp3AxisSweep.h
+	include/RE/H/hkpAabbPhantom.h
 	include/RE/H/hkpAction.h
 	include/RE/H/hkpAgentNnTrack.h
 	include/RE/H/hkpAllCdPointCollector.h
@@ -1234,8 +1246,11 @@ set(SOURCES
 	include/RE/H/hkpShapeContainer.h
 	include/RE/H/hkpShapePhantom.h
 	include/RE/H/hkpShapeRayCastCollectorOutput.h
+	include/RE/H/hkpShapeRayCastInput.h
 	include/RE/H/hkpShapeRayCastOutput.h
 	include/RE/H/hkpShapeType.h
+	include/RE/H/hkpSimpleShapePhantom.h
+	include/RE/H/hkpSimpleWorldRayCaster.h
 	include/RE/H/hkpSimplexSolver.h
 	include/RE/H/hkpSimulationIsland.h
 	include/RE/H/hkpSingleShapeContainer.h
@@ -1253,6 +1268,7 @@ set(SOURCES
 	include/RE/H/hkpWorldPostSimulationListener.h
 	include/RE/H/hkpWorldRayCastInput.h
 	include/RE/H/hkpWorldRayCastOutput.h
+	include/RE/H/hkpWorldRayCaster.h
 	include/RE/I/IAIWorldLocationHandle.h
 	include/RE/I/IAnimationClipLoaderSingleton.h
 	include/RE/I/IAnimationGraphManagerHolder.h
@@ -1558,6 +1574,7 @@ set(SOURCES
 	include/RE/P/PackageLocation.h
 	include/RE/P/PackedInstructionStream.h
 	include/RE/P/ParalysisEffect.h
+	include/RE/P/Pathing.h
 	include/RE/P/PathingCell.h
 	include/RE/P/PeakValueModifierEffect.h
 	include/RE/P/PerkEntryVisitor.h
@@ -1953,6 +1970,7 @@ set(SOURCES
 	include/REX/W32/VERSION.h
 	include/REX/W32/XINPUT.h
 	include/SKSE/API.h
+	include/SKSE/ContextHook.h
 	include/SKSE/Events.h
 	include/SKSE/IAT.h
 	include/SKSE/Impl/PCH.h
@@ -2246,6 +2264,7 @@ set(SOURCES
 	src/RE/H/hkbBehaviorGraph.cpp
 	src/RE/H/hkbBehaviorGraphData.cpp
 	src/RE/H/hkbVariableValueSet.cpp
+	src/RE/H/hkpAabbPhantom.cpp
 	src/RE/H/hkpBroadPhase.cpp
 	src/RE/H/hkpCdBody.cpp
 	src/RE/H/hkpCharacterProxyListener.cpp
@@ -2253,6 +2272,7 @@ set(SOURCES
 	src/RE/H/hkpMaterial.cpp
 	src/RE/H/hkpProperty.cpp
 	src/RE/H/hkpRigidBody.cpp
+	src/RE/H/hkpShapePhantom.cpp
 	src/RE/H/hkpWorldObject.cpp
 	src/RE/I/IAnimationGraphManagerHolder.cpp
 	src/RE/I/IFormFactory.cpp
@@ -2331,8 +2351,10 @@ set(SOURCES
 	src/RE/N/NiNode.cpp
 	src/RE/N/NiObject.cpp
 	src/RE/N/NiObjectNET.cpp
+	src/RE/N/NiPick.cpp
 	src/RE/N/NiPoint2.cpp
 	src/RE/N/NiPoint3.cpp
+	src/RE/N/NiQuaternion.cpp
 	src/RE/N/NiRefObject.cpp
 	src/RE/N/NiSkinInstance.cpp
 	src/RE/N/NiStringsExtraData.cpp

@@ -169,6 +169,19 @@ namespace RE
 
 			[[nodiscard]] static Renderer* GetSingleton() noexcept;
 
+			// VR only: global bool controlling stereo geometry shader instancing.
+			// Shadow rendering clears this to prevent quadrant artifacts (each hemisphere doubled).
+			// VR address: 0x143181708 (8 bytes after BSRenderManager* pointer at 0x143181700).
+			[[nodiscard]] static bool& GetDrawStereo() noexcept
+			{
+				if (REL::Module::IsVR()) {
+					static auto addr = REL::Offset(0x3181708).address();
+					return *reinterpret_cast<bool*>(addr);
+				}
+				static bool dummy = false;
+				return dummy;
+			}
+
 			void CreateSwapChain(REX::W32::HWND* a_window, bool a_setCurrent);
 			void KillWindow(std::uint32_t a_windowID);
 			void Lock();
@@ -198,12 +211,13 @@ namespace RE
 			[[nodiscard]] static RendererWindow*         GetCurrentRenderWindow();
 
 			// members
-			std::uint64_t unk000;      // 0000
-			bool          drawStereo;  // 0008
+			std::uint64_t unk000;  // 0000
+			void*         unk008;  // 0008 - window resize callback (function pointer) in SE
 #if defined(EXCLUSIVE_SKYRIM_FLAT)
 			RUNTIME_DATA_CONTENT;  // 0010
 #elif defined(EXCLUSIVE_SKYRIM_VR)
-			RUNTIME_DATA_CONTENT;  // VR 18
+			std::uint64_t unk010;  // 0010 - VR-only padding/field before RendererData
+			RUNTIME_DATA_CONTENT;  // 0018
 #endif
 
 		private:
@@ -212,7 +226,7 @@ namespace RE
 			void End();
 			void Shutdown();
 		};
-		STATIC_ASSERT_SIZE(Renderer, 0x21C0, 0x21C0, 0x1FB0);
+		STATIC_ASSERT_SIZE(Renderer, 0x21C8, 0x21C8, 0x1FC0);
 	}
 }
 #undef RUNTIME_DATA_CONTENT

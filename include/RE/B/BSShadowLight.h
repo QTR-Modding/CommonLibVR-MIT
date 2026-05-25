@@ -25,7 +25,7 @@ namespace RE
 	REX::W32::XMFLOAT4X4           lightTransform;    /* 00 */                              \
 	NiPointer<NiCamera>            camera;            /* 40 */                              \
 	NiPointer<BSShaderAccumulator> shaderAccumulator; /* 48, VR 50 */                       \
-	uint32_t                       unk50;             /* 50, VR 60 = -1 */                  \
+	uint32_t                       cullingMode;       /* 50, VR 60 = -1 */                  \
 	RENDER_TARGET_DEPTHSTENCIL     renderTarget;      /* 54, VR 64 */                       \
 	uint32_t                       shadowmapIndex;    /* 58, VR D0 - guess */               \
 	NiFrustumPlanes                clipPlanes;        /* 5C, VR 70 was NiPlane planes[6] */ \
@@ -33,7 +33,7 @@ namespace RE
 	NiRect<int32_t>                port;              /* D0, VR E8 shadowMapRect */         \
 	BSCullingProcess*              cullingProcess;    /* E0, VR F8 */                       \
 	bool                           clearRenderTarget; /* E8, VR 100 was uint16_t flags */   \
-	bool                           unkE9;             /* E9 */
+	bool                           isEnabled;         /* E9 */
             SHADOWMAPDESCRIPTOR_CONTENT;
 		};
 		static_assert(sizeof(ShadowmapDescriptor) == 0xF0);
@@ -47,31 +47,30 @@ namespace RE
 
 		struct ShadowmapDescriptorVR
 		{
-#define SHADOWMAPDESCRIPTOR_CONTENT_VR                                                    \
-	REX::W32::XMFLOAT4X4           lightTransform;    /* 00 */                            \
-	NiPointer<NiCamera>            camera;            /* 40 */                            \
-	uint64_t                       unkVR48;           /* VR 48 */                         \
-	NiPointer<BSShaderAccumulator> shaderAccumulator; /* 48, VR 50 */                     \
-	uint64_t                       unkVR58;           /* VR 58 */                         \
-	uint32_t                       unk50;             /* 50, VR 60 = -1 */                \
-	RENDER_TARGET_DEPTHSTENCIL     renderTarget;      /* 54, VR 64 */                     \
-	uint64_t                       unkVR68;           /* VR 68 = -1 */                    \
-	NiFrustumPlanes                clipPlanes;        /* 5C, VR 70 */                     \
-	uint32_t                       shadowmapIndex;    /* C8, VR E0 - guess*/              \
-	std::uint32_t                  unitsPerTexel;     /* CC */                            \
-	NiRect<int32_t>                port;              /* D0, VR E8 shadowMapRect */       \
-	BSCullingProcess*              cullingProcess;    /* E0, VR F8 */                     \
-	bool                           clearRenderTarget; /* E8, VR 100 was uint16_t flags */ \
-	bool                           unkE9;             /* E9 */
+#define SHADOWMAPDESCRIPTOR_CONTENT_VR                                                            \
+	REX::W32::XMFLOAT4X4           lightTransform;       /* 00 */                                 \
+	NiPointer<NiCamera>            camera[2];            /* 40 */                                 \
+	NiPointer<BSShaderAccumulator> shaderAccumulator[2]; /* 48, VR 50 */                          \
+	uint32_t                       cullingMode;          /* 50, VR 60 = (portalStrict ? 4 : 3) */ \
+	RENDER_TARGET_DEPTHSTENCIL     renderTarget;         /* 54, VR 64 */                          \
+	RENDER_TARGET_DEPTHSTENCIL     vrRenderTarget[2];    /* VR 68, VR 6C */                       \
+	uint32_t                       shadowmapIndex;       /* 58, VR 70 */                          \
+	NiFrustumPlanes                clipPlanes;           /* 5C, VR 74 */                          \
+	std::uint32_t                  unitsPerTexel;        /* CC */                                 \
+	NiRect<int32_t>                port;                 /* D0, VR E8 shadowMapRect */            \
+	BSCullingProcess*              cullingProcess;       /* E0, VR F8 */                          \
+	bool                           clearRenderTarget;    /* E8, VR 100 was uint16_t flags */      \
+	bool                           isEnabled;            /* E9 */
             SHADOWMAPDESCRIPTOR_CONTENT_VR;
 		};
 		static_assert(sizeof(ShadowmapDescriptorVR) == 0x108);
+		static_assert(offsetof(ShadowmapDescriptorVR, camera) == 0x40);
 		static_assert(offsetof(ShadowmapDescriptorVR, shaderAccumulator) == 0x50);
-		static_assert(offsetof(ShadowmapDescriptorVR, unkVR58) == 0x58);
-		static_assert(offsetof(ShadowmapDescriptorVR, unk50) == 0x60);
+		static_assert(offsetof(ShadowmapDescriptorVR, cullingMode) == 0x60);
 		static_assert(offsetof(ShadowmapDescriptorVR, renderTarget) == 0x64);
-		static_assert(offsetof(ShadowmapDescriptorVR, clipPlanes) == 0x70);
-		static_assert(offsetof(ShadowmapDescriptorVR, shadowmapIndex) == 0xE0);
+		static_assert(offsetof(ShadowmapDescriptorVR, vrRenderTarget) == 0x68);
+		static_assert(offsetof(ShadowmapDescriptorVR, shadowmapIndex) == 0x70);
+		static_assert(offsetof(ShadowmapDescriptorVR, clipPlanes) == 0x74);
 		static_assert(offsetof(ShadowmapDescriptorVR, port) == 0xE8);
 		static_assert(offsetof(ShadowmapDescriptorVR, cullingProcess) == 0xF8);
 		static_assert(offsetof(ShadowmapDescriptorVR, clearRenderTarget) == 0x100);
@@ -115,19 +114,19 @@ namespace RE
 		~BSShadowLight() override;  // 00
 
 		// add
-		virtual bool          GetIsFrustumOrDirectionalLight() = 0;                                                                                     // 04
-		virtual bool          GetIsFrustumLight();                                                                                                      // 05
-		virtual void          GetIsDirectionalLight();                                                                                                  // 06
-		virtual bool          GetIsParabolicLight();                                                                                                    // 07
-		virtual bool          GetIsOmniLight();                                                                                                         // 08
-		virtual void          Accumulate(std::uint32_t& a_globalShadowLightCount, std::uint32_t& a_shadowMaskChannel, NiAVObject* a_cullingScene) = 0;  // 09
-		virtual void          Render() = 0;                                                                                                             // 0A
-		virtual void          SetShadowMapCount(std::uint32_t a_count);                                                                                 // 0B
-		virtual void          ClearShadowMapData();                                                                                                     // 0C
-		virtual std::uint32_t GetPassExtraParam(std::uint32_t a_accumFlag);                                                                             // 0D
-		virtual bool          GetNeedsClipPlanes();                                                                                                     // 0E
-		virtual void          UpdateClipPlanes(void* a_unk1, void* a_unk2);                                                                             // 0F
-		virtual bool          UpdateCamera(const NiCamera* a_viewCamera) = 0;                                                                           // 10
+		virtual bool          GetIsFrustumOrDirectionalLight() = 0;                                                                                                                     // 04
+		virtual bool          GetIsFrustumLight();                                                                                                                                      // 05
+		virtual bool          GetIsDirectionalLight();                                                                                                                                  // 06
+		virtual bool          GetIsParabolicLight();                                                                                                                                    // 07
+		virtual bool          GetIsOmniLight();                                                                                                                                         // 08
+		virtual void          Accumulate(std::uint32_t& a_globalShadowLightCount, std::uint32_t a_shadowMaskChannel, NiAVObject* a_cullingScene, std::uint8_t a_vrUpdateFlag = 0) = 0;  // 09 - a_vrUpdateFlag used by VR only, ignored by SE/AE
+		virtual void          Render(std::uint32_t& a_index) = 0;                                                                                                                       // 0A
+		virtual void          SetShadowMapCount(std::uint32_t a_count);                                                                                                                 // 0B
+		virtual void          ReturnShadowmaps();                                                                                                                                       // 0C
+		virtual std::uint32_t GetPassExtraParam(std::uint32_t a_accumFlag);                                                                                                             // 0D
+		virtual bool          GetNeedsClipPlanes();                                                                                                                                     // 0E
+		virtual void          TransformClipSpacePlanes(REX::W32::D3DXMatrix* a_matrix1, REX::W32::D3DXMatrix* a_matrix2);                                                               // 0F
+		virtual bool          UpdateCamera(const NiCamera* a_viewCamera) = 0;                                                                                                           // 10
 
 		RUNTIME_DATA_ACCESSOR(RUNTIME_DATA, 0x148, 0x148);
 		RUNTIME_DATA_ACCESSOR_EX(RUNTIME_DATA_VR, GetVRRuntimeData, 0x148, 0x148);

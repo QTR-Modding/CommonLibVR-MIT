@@ -91,6 +91,15 @@ namespace RE
 			}
 		}
 
+		[[nodiscard]] SETTING_VALUE& GetSettingRef(DataID id)
+		{
+			if (REL::Module::IsVR()) {
+				return GetVRRuntimeData().data[static_cast<std::uint32_t>(id)].value;
+			} else {
+				return GetRuntimeData().data[static_cast<std::uint32_t>(id)];
+			}
+		}
+
 		~BGSShaderParticleGeometryData() override;  // 00
 
 		// override (TESForm)

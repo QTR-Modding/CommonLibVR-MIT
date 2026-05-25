@@ -333,7 +333,7 @@ namespace RE
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISUnderwaterMask;              /* 208, VR 230 */                                                                                       \
 	bool                                usesLDR;                                         /* 210, VR 238 */                                                                                       \
 	bool                                unk211;                                          /* 211, VR 239 */                                                                                       \
-	std::uint64_t                       unk218;                                          /* 218, VR 240 */
+	NiPointer<NiAVObject>               underwaterSplitterGeom;                          /* 218, VR 240 */
             RUNTIME_DATA_CONTENT
 		};
 		static_assert(sizeof(RUNTIME_DATA) == 0x1C8);
@@ -385,7 +385,7 @@ namespace RE
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISUnderwaterMask;                      /* 208, VR 230 */                                                                                       \
 	bool                                usesLDR;                                                 /* 210, VR 238 */                                                                                       \
 	bool                                unk211;                                                  /* 211, VR 239 */                                                                                       \
-	std::uint64_t                       unk218;                                                  /* 218, VR 240 */
+	NiPointer<NiAVObject>               underwaterSplitterGeom;                                  /* 218, VR 240 */
             VR_RUNTIME_DATA_CONTENT
 		};
 		static_assert(sizeof(VR_RUNTIME_DATA) == 0x1F0);

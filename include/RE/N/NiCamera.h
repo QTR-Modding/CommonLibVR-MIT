@@ -9,6 +9,7 @@
 
 namespace RE
 {
+	class NiMatrix44;
 	class NiCamera : public NiAVObject
 	{
 	public:
@@ -18,28 +19,32 @@ namespace RE
 
 		struct RUNTIME_DATA
 		{
-#if defined(EXCLUSIVE_SKYRIM_FLAT)
-#	define RUNTIME_DATA_CONTENT float worldToCam[4][4]; /* 0 */
+#define RUNTIME_DATA_CONTENT float worldToCam[4][4]; /* 0 */
 			RUNTIME_DATA_CONTENT
 		};
 		static_assert(sizeof(RUNTIME_DATA) == 0x40);
-#elif defined(EXCLUSIVE_SKYRIM_VR)
-#	define RUNTIME_DATA_CONTENT                   \
-		float           worldToCam[4][4]; /* 0 */  \
-		NiFrustum*      viewFrustumPtr;   /* 40 */ \
-		BSTArray<void*> unk180;           /* 48 */ \
-		BSTArray<void*> unk198;           /* 60 */ \
-		BSTArray<void*> unk1B0;           /* 78 */ \
-		std::uint32_t   unk1C8;           /* 90 */
 
-			RUNTIME_DATA_CONTENT
+		// VR Layout
+		struct RUNTIME_DATA_VR
+		{
+#define RUNTIME_DATA_CONTENT_VR                                                              \
+	float                   worldToCam[4][4];   /* 00 */                                     \
+	NiFrustum*              viewFrustumBuffer;  /* 40 - UpdateProjection writes here */      \
+	NiFrustum*              viewFrustumArray;   /* 48 - per-eye frustums for GetNearPlane */ \
+	BSTArray<NiRect<float>> eyeViewportRects;   /* 50 */                                     \
+	BSTArray<NiMatrix44>    eyeViewMatrices;    /* 68 */                                     \
+	void*                   eyeCullingProcs[2]; /* 80 */                                     \
+	std::uint32_t           unk1C8;             /* 90 */
+
+			RUNTIME_DATA_CONTENT_VR
 		};
-		static_assert(sizeof(RUNTIME_DATA) == 0x98);
-#else
-#	define RUNTIME_DATA_CONTENT float worldToCam[4][4]; /* 0 */
-			RUNTIME_DATA_CONTENT
-		};
-#endif
+		static_assert(sizeof(RUNTIME_DATA_VR) == 0x98);
+		static_assert(offsetof(RUNTIME_DATA_VR, viewFrustumBuffer) == 0x40);
+		static_assert(offsetof(RUNTIME_DATA_VR, viewFrustumArray) == 0x48);
+		static_assert(offsetof(RUNTIME_DATA_VR, eyeViewportRects) == 0x50);
+		static_assert(offsetof(RUNTIME_DATA_VR, eyeViewMatrices) == 0x68);
+		static_assert(offsetof(RUNTIME_DATA_VR, eyeCullingProcs) == 0x80);
+		static_assert(offsetof(RUNTIME_DATA_VR, unk1C8) == 0x90);
 
 		struct RUNTIME_DATA2
 		{
@@ -78,15 +83,30 @@ namespace RE
 		bool        WorldPtToScreenPt3(const NiPoint3& a_point, float& a_xOut, float& a_yOut, float& a_zOut, float a_zeroTolerance);
 		static bool WorldPtToScreenPt3(const float a_matrix[4][4], const NiRect<float>& a_port, const NiPoint3& a_point, float& a_xOut, float& a_yOut, float& a_zOut, float a_zeroTolerance);
 
-		RUNTIME_DATA_ACCESSOR(RUNTIME_DATA, 0x110, 0x138);
-		RUNTIME_DATA_ACCESSOR_EX(RUNTIME_DATA2, GetRuntimeData2, 0x150, 0x1CC);
-		// members
-#ifndef SKYRIM_CROSS_VR
-		RUNTIME_DATA_CONTENT;   // 110, 138
-		RUNTIME_DATA2_CONTENT;  // 150, 1CC
+		RUNTIME_DATA_ACCESSOR(RUNTIME_DATA, 0x110, 0);
+		RUNTIME_DATA_ACCESSOR_EX(RUNTIME_DATA2, GetRuntimeData2, 0x150, 0x1D0);
+		VR_RUNTIME_DATA_ACCESSOR(RUNTIME_DATA_VR, GetVRRuntimeData, 0x138);
+
+		// return left in VR
+		[[nodiscard]] float GetNearPlane() const
+		{
+			if (REL::Module::IsVR()) {
+				return GetVRRuntimeData().viewFrustumArray->fNear;
+			}
+			// Fallback to Flat data
+			return GetRuntimeData2().viewFrustum.fNear;
+		}
+
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
+		RUNTIME_DATA_CONTENT;   // 110
+		RUNTIME_DATA2_CONTENT;  // 150
+#elif defined(EXCLUSIVE_SKYRIM_VR)
+		RUNTIME_DATA_CONTENT_VR;  // 138
+		RUNTIME_DATA2_CONTENT;    // 1CC
 #endif
 	};
 	STATIC_ASSERT_SIZE(NiCamera, 0x188, 0x188, 0x208, 0x110);
 }
 #undef RUNTIME_DATA_CONTENT
+#undef RUNTIME_DATA_CONTENT_VR
 #undef RUNTIME_DATA2_CONTENT
