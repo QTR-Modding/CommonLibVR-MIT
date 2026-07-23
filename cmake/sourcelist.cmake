@@ -24,6 +24,7 @@ set(SOURCES
 	include/RE/A/ActorMagicCaster.h
 	include/RE/A/ActorMover.h
 	include/RE/A/ActorPackage.h
+	include/RE/A/ActorPackageData.h
 	include/RE/A/ActorSpeedChannel.h
 	include/RE/A/ActorState.h
 	include/RE/A/ActorTargetCheck.h
@@ -62,6 +63,7 @@ set(SOURCES
 	include/RE/A/ahkpWorld.h
 	include/RE/B/BGSAbilityPerkEntry.h
 	include/RE/B/BGSAcousticSpace.h
+	include/RE/B/BGSAcousticSpaceListener.h
 	include/RE/B/BGSAction.h
 	include/RE/B/BGSActionData.h
 	include/RE/B/BGSActorCellEvent.h
@@ -277,6 +279,7 @@ set(SOURCES
 	include/RE/B/BSISoundCategory.h
 	include/RE/B/BSISoundDescriptor.h
 	include/RE/B/BSISoundOutputModel.h
+	include/RE/B/BSIStream.h
 	include/RE/B/BSImagespaceShader.h
 	include/RE/B/BSImagespaceShaderBlur3.h
 	include/RE/B/BSImagespaceShaderISTemporalAA.h
@@ -325,6 +328,7 @@ set(SOURCES
 	include/RE/B/BSMusicManager.h
 	include/RE/B/BSNavmesh.h
 	include/RE/B/BSNavmeshInfoMap.h
+	include/RE/B/BSNavmeshInfoSearch.h
 	include/RE/B/BSNavmeshSearch.h
 	include/RE/B/BSNiAllocator.h
 	include/RE/B/BSNiNode.h
@@ -344,10 +348,13 @@ set(SOURCES
 	include/RE/B/BSParticleShaderProperty.h
 	include/RE/B/BSParticleShaderRainEmitter.h
 	include/RE/B/BSParticleShaderSnowEmitter.h
+	include/RE/B/BSParticleSystemManager.h
+	include/RE/B/BSPathBuilder.h
 	include/RE/B/BSPathing.h
 	include/RE/B/BSPathingActorAttributes.h
 	include/RE/B/BSPathingAvoidNode.h
 	include/RE/B/BSPathingCell.h
+	include/RE/B/BSPathingDoor.h
 	include/RE/B/BSPathingLocation.h
 	include/RE/B/BSPathingRequest.h
 	include/RE/B/BSPathingSearchParameters.h
@@ -359,6 +366,7 @@ set(SOURCES
 	include/RE/B/BSPortalGraphEntry.h
 	include/RE/B/BSPortalSharedNode.h
 	include/RE/B/BSPrecomputedNavmeshInfoPathMap.h
+	include/RE/B/BSPrecomputedNavmeshInfoSearch.h
 	include/RE/B/BSReloadShaderI.h
 	include/RE/B/BSRenderManager.h
 	include/RE/B/BSRenderPass.h
@@ -431,6 +439,7 @@ set(SOURCES
 	include/RE/B/BSTempEffectSPG.h
 	include/RE/B/BSTempEffectSimpleDecal.h
 	include/RE/B/BSTempEffectWeaponBlood.h
+	include/RE/B/BSTempNodeManager.h
 	include/RE/B/BSTerrainEffect.h
 	include/RE/B/BSTextureSet.h
 	include/RE/B/BSThread.h
@@ -439,6 +448,7 @@ set(SOURCES
 	include/RE/B/BSTimer.h
 	include/RE/B/BSTrackedControllerDevice.h
 	include/RE/B/BSTreeManager.h
+	include/RE/B/BSTreeNode.h
 	include/RE/B/BSTriShape.h
 	include/RE/B/BSUIMessageData.h
 	include/RE/B/BSUIScaleformData.h
@@ -678,6 +688,7 @@ set(SOURCES
 	include/RE/C/CrosshairPickData.h
 	include/RE/C/CureEffect.h
 	include/RE/C/CursorMenu.h
+	include/RE/C/CustomActorPackageData.h
 	include/RE/D/DamageImpactData.h
 	include/RE/D/DarknessEffect.h
 	include/RE/D/DecalData.h
@@ -716,6 +727,7 @@ set(SOURCES
 	include/RE/E/EnhanceWeaponEffect.h
 	include/RE/E/ErrorCodes.h
 	include/RE/E/ErrorLogger.h
+	include/RE/E/EscortActorPackageData.h
 	include/RE/E/EtherealizationEffect.h
 	include/RE/E/Explosion.h
 	include/RE/E/ExtraAction.h
@@ -1077,6 +1089,7 @@ set(SOURCES
 	include/RE/G/GrenadeProjectile.h
 	include/RE/G/GridArray.h
 	include/RE/G/GridCellArray.h
+	include/RE/G/GuardActorPackageData.h
 	include/RE/G/GuideEffect.h
 	include/RE/H/HUDChargeMeter.h
 	include/RE/H/HUDData.h
@@ -1170,6 +1183,8 @@ set(SOURCES
 	include/RE/H/hkp3AxisSweep.h
 	include/RE/H/hkpAabbPhantom.h
 	include/RE/H/hkpAction.h
+	include/RE/H/hkpAgent1nSector.h
+	include/RE/H/hkpAgent3ProcessInput.h
 	include/RE/H/hkpAgentNnTrack.h
 	include/RE/H/hkpAllCdPointCollector.h
 	include/RE/H/hkpAllRayHitCollector.h
@@ -1196,9 +1211,11 @@ set(SOURCES
 	include/RE/H/hkpClosestRayHitCollector.h
 	include/RE/H/hkpCollidable.h
 	include/RE/H/hkpCollidableCollidableFilter.h
+	include/RE/H/hkpCollisionAgentConfig.h
 	include/RE/H/hkpCollisionEvent.h
 	include/RE/H/hkpCollisionFilter.h
 	include/RE/H/hkpCollisionInput.h
+	include/RE/H/hkpCollisionQualityInfo.h
 	include/RE/H/hkpCompressedMeshShape.h
 	include/RE/H/hkpConstraintAtom.h
 	include/RE/H/hkpConstraintData.h
@@ -1207,6 +1224,7 @@ set(SOURCES
 	include/RE/H/hkpConstraintMotor.h
 	include/RE/H/hkpConstraintOwner.h
 	include/RE/H/hkpContactListener.h
+	include/RE/H/hkpContactMgr.h
 	include/RE/H/hkpContactPointEvent.h
 	include/RE/H/hkpContactPointProperties.h
 	include/RE/H/hkpConvexListFilter.h
@@ -1232,6 +1250,7 @@ set(SOURCES
 	include/RE/H/hkpPhantom.h
 	include/RE/H/hkpPhantomListener.h
 	include/RE/H/hkpPhantomType.h
+	include/RE/H/hkpProcessCollisionInput.h
 	include/RE/H/hkpProperty.h
 	include/RE/H/hkpRagdollConstraintData.h
 	include/RE/H/hkpRayCollidableFilter.h
@@ -1307,7 +1326,10 @@ set(SOURCES
 	include/RE/I/IObjectProcessor.h
 	include/RE/I/IPackageData.h
 	include/RE/I/IPackageDataAIWorldLocationHandle.h
+	include/RE/I/IPathBuilder.h
+	include/RE/I/IPathBuilderTracker.h
 	include/RE/I/IPostAnimationChannelUpdateFunctor.h
+	include/RE/I/IProcedureTreeExecState.h
 	include/RE/I/IProcedureTreeItem.h
 	include/RE/I/IProfilePolicy.h
 	include/RE/I/ISavePatcherInterface.h
@@ -1374,6 +1396,7 @@ set(SOURCES
 	include/RE/L/LevelUpMenu.h
 	include/RE/L/LightEffect.h
 	include/RE/L/LinkerProcessor.h
+	include/RE/L/LoadGameMissingContentCallBack.h
 	include/RE/L/LoadStorageWrapper.h
 	include/RE/L/LoadWaitSpinner.h
 	include/RE/L/LoadingMenu.h
@@ -1560,6 +1583,7 @@ set(SOURCES
 	include/RE/N/NightEyeEffect.h
 	include/RE/N/NonActorMagicCaster.h
 	include/RE/N/NonActorMagicTarget.h
+	include/RE/N/NullPathBuilderTracker.h
 	include/RE/O/Object.h
 	include/RE/O/ObjectTypeInfo.h
 	include/RE/O/ObjectiveState.h
@@ -1576,6 +1600,8 @@ set(SOURCES
 	include/RE/P/ParalysisEffect.h
 	include/RE/P/Pathing.h
 	include/RE/P/PathingCell.h
+	include/RE/P/PathingDoor.h
+	include/RE/P/PatrolActorPackageData.h
 	include/RE/P/PeakValueModifierEffect.h
 	include/RE/P/PerkEntryVisitor.h
 	include/RE/P/PerkRankVisitor.h
@@ -1634,6 +1660,7 @@ set(SOURCES
 	include/RE/RTTI.h
 	include/RE/S/SFTypes.h
 	include/RE/S/SafeZoneMenu.h
+	include/RE/S/SandBoxActorPackageData.h
 	include/RE/S/SaveFileHandleReaderWriter.h
 	include/RE/S/SavePatcher.h
 	include/RE/S/SaveStorageWrapper.h
@@ -1890,6 +1917,7 @@ set(SOURCES
 	include/RE/U/UnlinkedTypes.h
 	include/RE/U/UpdateConstellationAnims.h
 	include/RE/U/UpdateStarText.h
+	include/RE/U/UseWeaponActorPackageData.h
 	include/RE/U/UserEventEnabled.h
 	include/RE/U/UserEvents.h
 	include/RE/V/VATS.h
@@ -2048,6 +2076,7 @@ set(SOURCES
 	src/RE/B/BSGamepadDevice.cpp
 	src/RE/B/BSGeometry.cpp
 	src/RE/B/BSHandleRefObject.cpp
+	src/RE/B/BSIStream.cpp
 	src/RE/B/BSInputDevice.cpp
 	src/RE/B/BSInputDeviceFactory.cpp
 	src/RE/B/BSInputDeviceManager.cpp
@@ -2066,6 +2095,7 @@ set(SOURCES
 	src/RE/B/BSPCGamepadDeviceDelegate.cpp
 	src/RE/B/BSPCGamepadDeviceHandler.cpp
 	src/RE/B/BSPCOrbisGamepadDevice.cpp
+	src/RE/B/BSParticleSystemManager.cpp
 	src/RE/B/BSPathingLocation.cpp
 	src/RE/B/BSPathingRequest.cpp
 	src/RE/B/BSPointerHandle.cpp
@@ -2083,6 +2113,8 @@ set(SOURCES
 	src/RE/B/BSSystemFileStorage.cpp
 	src/RE/B/BSTArray.cpp
 	src/RE/B/BSTCreateFactoryManager.cpp
+	src/RE/B/BSTempNodeManager.cpp
+	src/RE/B/BSTreeNode.cpp
 	src/RE/B/BSUIMessageData.cpp
 	src/RE/B/BSVirtualKeyboardDevice.cpp
 	src/RE/B/BSVisit.cpp
@@ -2257,7 +2289,6 @@ set(SOURCES
 	src/RE/H/HeldStateHandler.cpp
 	src/RE/H/HorseCameraState.cpp
 	src/RE/H/hkBaseTypes.cpp
-	src/RE/H/hkMemoryRouter.cpp
 	src/RE/H/hkReferencedObject.cpp
 	src/RE/H/hkStringPtr.cpp
 	src/RE/H/hkVector4.cpp

@@ -3,6 +3,7 @@
 #include "RE/B/BSPointerHandle.h"
 #include "RE/N/NiPoint3.h"
 #include "RE/N/NiSmartPointer.h"
+#include "REL/Relocation.h"
 
 namespace RE
 {
@@ -32,6 +33,24 @@ namespace RE
 			return *singleton;
 		}
 
+		[[nodiscard]] ObjectRefHandle GetActiveTarget() const
+		{
+#if defined(EXCLUSIVE_SKYRIM_FLAT)
+			return target;
+#else
+			if (REL::Module::IsVR()) {
+				if (target[VR_DEVICE::kLeftController])
+					return target[VR_DEVICE::kLeftController];
+				if (target[VR_DEVICE::kRightController])
+					return target[VR_DEVICE::kRightController];
+				if (target[VR_DEVICE::kHeadset])
+					return target[VR_DEVICE::kHeadset];
+				return ObjectRefHandle();
+			}
+			return target[0];
+#endif
+		}
+
 		// members
 #if defined(EXCLUSIVE_SKYRIM_FLAT)
 		std::uint32_t                    pad00;           // 00
@@ -53,12 +72,12 @@ namespace RE
 		ObjectRefHandle                  grabPickRef[VR_DEVICE::kTotal];     // 1C
 		NiPoint3                         collisionPoint[VR_DEVICE::kTotal];  // 28
 		std::uint32_t                    pad4C;                              // 4C
-		std::uint64_t                    unk50[VR_DEVICE::kTotal];           // 50
+		bhkRigidBody*                    targetCollider[VR_DEVICE::kTotal];  // 50
 		float                            unk68;                              // 68
 		float                            unk6C;                              // 68
 		std::uint32_t                    unk70;                              // 70
 		std::uint32_t                    unk74;                              // 74
-		NiPointer<bhkSimpleShapePhantom> unk78;                              // 78
+		NiPointer<bhkSimpleShapePhantom> pickCollider;                       // 78
 		std::uint32_t                    unk80;                              // 80
 		std::uint16_t                    unk84;                              // 84
 		std::byte                        unk86;                              // 86

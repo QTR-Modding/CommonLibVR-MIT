@@ -181,10 +181,10 @@ namespace RE
 	X2(ISWaterFlow, 157, 172)                            /* BSImagespaceShaderWaterFlow */                                      \
 	/* SE 158 missing */                                                                                                        \
 	/* VR only */                                                                                                               \
-	X2(ISCopyDepthBuffer, INVALID_INDEX, 98)                      /* BSImagespaceShaderCopyDepthBuffer */                       \
-	X2(ISCopyDepthBuffer_DR, INVALID_INDEX, 99)                   /* BSImagespaceShaderCopyDepthBuffer_DR */                    \
-	X2(ISCopyDepthBufferTargetSize, INVALID_INDEX, 100)           /* BSImagespaceShaderCopyDepthBuffer_TargetSize */            \
-	X2(ISGraphicsTextureFilterMode, INVALID_INDEX, 111)           /* ISGraphicsTextureFilterMode */                             \
+	X2(ISCopyDepthBuffer, INVALID_INDEX, 98)            /* BSImagespaceShaderCopyDepthBuffer */                                 \
+	X2(ISCopyDepthBuffer_DR, INVALID_INDEX, 99)         /* BSImagespaceShaderCopyDepthBuffer_DR */                              \
+	X2(ISCopyDepthBufferTargetSize, INVALID_INDEX, 100) /* BSImagespaceShaderCopyDepthBuffer_TargetSize */                      \
+	/* VR 111 = ISReflectionBlurHCS; ISGraphicsTextureFilterMode was a phantom (removed) */                                     \
 	X2(ISDownsampleHierarchicalDepthBufferCS, INVALID_INDEX, 126) /* BSImagespaceShaderISDownsampleHierarchicalDepthBufferCS */ \
 	X2(ISDiffScaleDownsampleDepthBufferCS, INVALID_INDEX, 127)    /* BSImagespaceShaderISDiffScaleDownsampleDepthBufferCS */    \
 	X2(ISFullScreenVR, INVALID_INDEX, 129)                        /* BSImagespaceShaderISFullScreenVR */                        \
@@ -198,7 +198,18 @@ namespace RE
 	X2(ISLvl0PreTest, INVALID_INDEX, 143)                         /* BSImagespaceShaderLvl0PreTest */                           \
 	X2(ISSetupPreTest, INVALID_INDEX, 144)                        /* BSImagespaceShaderSetupPreTest */
 
-#define MakeImageSpaceID(se, vr) (se | (vr << 8))
+// IDs pack SE (low byte) + VR (high byte). Single-runtime builds resolve to the concrete
+// runtime index (so the enum value matches the binary, which the id discovery relies on);
+// SKYRIM_CROSS_VR keeps the packed form for GetCurrentIndex(). NOTE: in a single-runtime
+// build every effect absent from that runtime collapses to INVALID_INDEX, so name lookup
+// uses an if-chain rather than a switch (duplicate case labels are an error).
+#if defined(SKYRIM_CROSS_VR)
+#	define MakeImageSpaceID(se, vr) (se | (vr << 8))
+#elif defined(EXCLUSIVE_SKYRIM_VR)
+#	define MakeImageSpaceID(se, vr) (vr)
+#else
+#	define MakeImageSpaceID(se, vr) (se)
+#endif
 		static constexpr std::uint16_t INVALID_INDEX = 255;
 
 		static constexpr std::uint16_t TOTAL_SE_EFFECTS = 159;
@@ -213,7 +224,7 @@ namespace RE
 		 * rendering pipeline. Values are packed to support both SE/AE and VR indices.
 		 * Use GetSEIndex() and GetVRIndex() to extract runtime-specific indices.
 		 */
-		enum ImageSpaceEffectEnum
+		enum ImageSpaceEffectEnum : std::int32_t
 		{
 			IMAGE_SPACE_EFFECTS
 				Total = TOTAL_SE_EFFECTS,
@@ -223,23 +234,33 @@ namespace RE
 #undef X2
 
 		/**
-		 * @brief Extracts the Skyrim Special Edition index from a packed effect ID.
-		 * @param a_effect The packed effect enum value.
-		 * @return The SE index (lower 8 bits).
+		 * @brief Gets the Skyrim Special Edition index for an effect ID.
+		 * @return The SE index, or INVALID_INDEX in a VR-only build.
 		 */
-		[[nodiscard]] static constexpr std::uint16_t GetSEIndex(ImageSpaceEffectEnum a_effect) noexcept
+		[[nodiscard]] static constexpr std::uint16_t GetSEIndex([[maybe_unused]] ImageSpaceEffectEnum a_effect) noexcept
 		{
+#if defined(SKYRIM_CROSS_VR)
 			return static_cast<std::uint16_t>(a_effect & 0xFF);
+#elif defined(EXCLUSIVE_SKYRIM_VR)
+			return INVALID_INDEX;                         // SE index is not encoded in a VR-only build
+#else
+			return static_cast<std::uint16_t>(a_effect);  // id is already the SE/AE index
+#endif
 		}
 
 		/**
-		 * @brief Extracts the Skyrim VR index from a packed effect ID.
-		 * @param a_effect The packed effect enum value.
-		 * @return The VR index (upper 8 bits).
+		 * @brief Gets the Skyrim VR index for an effect ID.
+		 * @return The VR index, or INVALID_INDEX in a non-VR build.
 		 */
-		[[nodiscard]] static constexpr std::uint16_t GetVRIndex(ImageSpaceEffectEnum a_effect) noexcept
+		[[nodiscard]] static constexpr std::uint16_t GetVRIndex([[maybe_unused]] ImageSpaceEffectEnum a_effect) noexcept
 		{
+#if defined(SKYRIM_CROSS_VR)
 			return static_cast<std::uint16_t>((a_effect >> 8) & 0xFF);
+#elif defined(EXCLUSIVE_SKYRIM_VR)
+			return static_cast<std::uint16_t>(a_effect);  // id is already the VR index
+#else
+			return INVALID_INDEX;                         // VR index is not encoded in a non-VR build
+#endif
 		}
 
 		/**
@@ -268,17 +289,17 @@ namespace RE
 		 */
 		[[nodiscard]] static std::string GetImageSpaceEffectName(ImageSpaceEffectEnum a_effect)
 		{
-#define X(name, index)                   \
-	case MakeImageSpaceID(index, index): \
+#define X(name, index)      \
+	if (a_effect == (name)) \
 		return #name;
-#define X2(name, se, vr)           \
-	case MakeImageSpaceID(se, vr): \
+#define X2(name, se, vr)    \
+	if (a_effect == (name)) \
 		return #name;
-			switch (a_effect) {
-				IMAGE_SPACE_EFFECTS
-			default:
-				return "Unknown";
-			}
+			// if-chain (not switch): single-runtime builds collapse every cross-runtime
+			// effect to INVALID_INDEX; duplicate switch cases are an error, duplicate
+			// if-conditions are not. Present effects have unique values (first match wins).
+			IMAGE_SPACE_EFFECTS
+			return "Unknown";
 #undef X
 #undef X2
 		}
@@ -290,6 +311,31 @@ namespace RE
 			BSImagespaceShader*             BSImagespaceShaderISTemporalAA_Water;  // 10
 			bool                            taaEnabled;                            // 18
 		};
+
+		// Real type of the field misnamed BSImagespaceShaderISSAOBlurH below (all three
+		// runtimes; the feeding allocation is 0x70 bytes, not sizeof(BSImagespaceShader)
+		// == 0x1A8). Holds pointers to the rest of the SAO effect chain plus SAO/DOF
+		// Display-menu ini defaults, incl. bSAOEnable:Display into enableSAO.
+		struct SAOEffectParams
+		{
+			ImageSpaceEffect* blurH;            // 00 - ISSAOBlurH (self)
+			ImageSpaceEffect* blurV;            // 08 - ISSAOBlurV
+			ImageSpaceEffect* cameraZ;          // 10 - ISSAOCameraZ
+			ImageSpaceEffect* compositeSAO;     // 18 - ISSAOCompositeSAO
+			ImageSpaceEffect* compositeFog;     // 20 - ISSAOCompositeFog
+			ImageSpaceEffect* compositeSAOFog;  // 28 - ISSAOCompositeSAOFog
+			ImageSpaceEffect* minify;           // 30 - ISMinify
+			ImageSpaceEffect* minifyContrast;   // 38 - ISMinifyContrast
+			ImageSpaceEffect* rawAO;            // 40 - ISSAORawAO
+			ImageSpaceEffect* rawAONoTemporal;  // 48 - ISSAORawAONoTemporal
+			bool              enableSAO;        // 50 - from bSAOEnable:Display (low byte of an 8-byte slot)
+			std::uint8_t      pad51[3];         // 51
+			std::uint32_t     unk54;            // 54 - always 0 at construction
+			std::uint64_t     unk58;            // 58 - always 0 at construction
+			std::uint64_t     unk60;            // 60 - always 0 at construction
+			std::uint64_t     unk68;            // 68 - always 0 at construction
+		};
+		static_assert(sizeof(SAOEffectParams) == 0x70);
 
 		struct RUNTIME_DATA
 		{
@@ -322,7 +368,7 @@ namespace RE
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISLightingComposite;           /* 1B0, VR 1D0 */                                                                                       \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISPerlinNoiseCS;               /* 1B8, VR 1D8 */                                                                                       \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderReflectionsRayTracing;         /* 1C0, VR 1E8 */                                                                                       \
-	NiPointer<BSImagespaceShader>       BSImagespaceShaderISSAOBlurH;                    /* 1C8, VR 1F0 */                                                                                       \
+	SAOEffectParams*                    BSImagespaceShaderISSAOBlurH;                    /* 1C8, VR 1F0 -- see SAOEffectParams doc comment */                                                    \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISSAOBlurHCS;                  /* 1D0, VR 1F8 */                                                                                       \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISSILComposite;                /* 1D8, VR 200 */                                                                                       \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISSimpleColor;                 /* 1E0, VR 208 */                                                                                       \
@@ -374,7 +420,7 @@ namespace RE
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISPerlinNoiseCS;                       /* 1B8, VR 1D8 */                                                                                       \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderTransformLvl7PreTest;                  /* VR 1E0 */                                                                                            \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderReflectionsRayTracing;                 /* 1C0, VR 1E8 */                                                                                       \
-	NiPointer<BSImagespaceShader>       BSImagespaceShaderISSAOBlurH;                            /* 1C8, VR 1F0 */                                                                                       \
+	SAOEffectParams*                    BSImagespaceShaderISSAOBlurH;                            /* 1C8, VR 1F0 -- see SAOEffectParams doc comment above */                                              \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISSAOBlurHCS;                          /* 1D0, VR 1F8 */                                                                                       \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISSILComposite;                        /* 1D8, VR 200 */                                                                                       \
 	NiPointer<BSImagespaceShader>       BSImagespaceShaderISSimpleColor;                         /* 1E0, VR 208 */                                                                                       \

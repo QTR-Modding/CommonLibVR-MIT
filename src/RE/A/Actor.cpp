@@ -122,10 +122,17 @@ namespace RE
 		xTalk->talk = a_talk;
 	}
 
-	NiAVObject* Actor::CalculateLOS(NiPoint3* a_targetPosition, NiPoint3* a_rayHitPosition, float a_viewCone)
+	ACTOR_LOS_LOCATION Actor::CalculateLOS(Actor* a_target, float a_viewCone)
 	{
-		using func_t = decltype(&Actor::CalculateLOS);
-		static REL::Relocation<func_t> func{ REL::RelocationID(36754, 37770) };
+		using func_t = ACTOR_LOS_LOCATION(Actor*, Actor*, float);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(36752, 37768) };
+		return func(this, a_target, a_viewCone);
+	}
+
+	NiAVObject* Actor::CalculateLOS(const NiPoint3& a_targetPosition, const NiPoint3& a_rayHitPosition, float a_viewCone)
+	{
+		using func_t = NiAVObject*(Actor*, const NiPoint3&, const NiPoint3&, float);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(36754, 37770) };
 		return func(this, a_targetPosition, a_rayHitPosition, a_viewCone);
 	}
 
@@ -1060,6 +1067,13 @@ namespace RE
 		return func(this, a_limb);
 	}
 
+	bool Actor::IsMovementAnimationDriven() const
+	{
+		using func_t = decltype(&Actor::IsMovementAnimationDriven);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(36487, 37486) };
+		return func(this);
+	}
+
 	bool Actor::IsMoving() const
 	{
 		using func_t = decltype(&Actor::IsMoving);
@@ -1319,6 +1333,13 @@ namespace RE
 		return true;
 	}
 
+	bool Actor::StartCombat(Actor* a_target, CombatGroup* a_combatGroup)
+	{
+		using func_t = decltype(&Actor::StartCombat);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(37608, 38561) };
+		return func(this, a_target, a_combatGroup);
+	}
+
 	void Actor::StealAlarm(TESObjectREFR* a_ref, TESForm* a_object, std::int32_t a_num, std::int32_t a_total, TESForm* a_owner, bool a_allowWarning)
 	{
 		using func_t = decltype(&Actor::StealAlarm);
@@ -1567,6 +1588,106 @@ namespace RE
 	}
 
 #ifdef SKYRIM_CROSS_VR
+	void Actor::RemoveWeapon(BIPED_OBJECT equipIndex)
+	{
+		RelocateVirtual<decltype(&Actor::RemoveWeapon)>(0x82, 0x83, this, equipIndex);
+	}
+
+	void Actor::SetObjectReference(TESBoundObject* a_object)
+	{
+		RelocateVirtual<decltype(&Actor::SetObjectReference)>(0x84, 0x85, this, a_object);
+	}
+
+	void Actor::MoveHavok(bool a_forceRec)
+	{
+		RelocateVirtual<decltype(&Actor::MoveHavok)>(0x85, 0x86, this, a_forceRec);
+	}
+
+	void Actor::GetLinearVelocity(NiPoint3& a_velocity) const
+	{
+		return RelocateVirtual<decltype(&Actor::GetLinearVelocity)>(0x86, 0x87, this, a_velocity);
+	}
+
+	void Actor::SetActionComplete(bool a_set)
+	{
+		RelocateVirtual<decltype(&Actor::SetActionComplete)>(0x87, 0x88, this, a_set);
+	}
+
+	void Actor::Disable()
+	{
+		RelocateVirtual<decltype(&Actor::Disable)>(0x89, 0x8A, this);
+	}
+
+	void Actor::ResetInventory(bool a_leveledOnly)
+	{
+		RelocateVirtual<decltype(&Actor::ResetInventory)>(0x8A, 0x8B, this, a_leveledOnly);
+	}
+
+	NiNode* Actor::GetFireNode()
+	{
+		return RelocateVirtual<decltype(&Actor::GetFireNode)>(0x8C, 0x8D, this);
+	}
+
+	void Actor::SetFireNode(NiNode* a_fireNode)
+	{
+		RelocateVirtual<decltype(&Actor::SetFireNode)>(0x8D, 0x8E, this, a_fireNode);
+	}
+
+	bool Actor::OnAddCellPerformQueueReference(TESObjectCELL& a_cell) const
+	{
+		return RelocateVirtual<decltype(&Actor::OnAddCellPerformQueueReference)>(0x90, 0x91, this, a_cell);
+	}
+
+	void Actor::DoMoveToHigh()
+	{
+		RelocateVirtual<decltype(&Actor::DoMoveToHigh)>(0x91, 0x92, this);
+	}
+
+	void Actor::TryMoveToMiddleLow()
+	{
+		RelocateVirtual<decltype(&Actor::TryMoveToMiddleLow)>(0x92, 0x93, this);
+	}
+
+	bool Actor::TryChangeSkyCellActorsProcessLevel()
+	{
+		return RelocateVirtual<decltype(&Actor::TryChangeSkyCellActorsProcessLevel)>(0x93, 0x94, this);
+	}
+
+	void Actor::TryUpdateActorLastSeenTime()
+	{
+		RelocateVirtual<decltype(&Actor::TryUpdateActorLastSeenTime)>(0x95, 0x96, this);
+	}
+
+	void Actor::SetParentCell(TESObjectCELL* a_cell)
+	{
+		RelocateVirtual<decltype(&Actor::SetParentCell)>(0x98, 0x99, this, a_cell);
+	}
+
+	bool Actor::IsDead(bool a_notEssential) const
+	{
+		return RelocateVirtual<decltype(&Actor::IsDead)>(0x99, 0x9A, this, a_notEssential);
+	}
+
+	bool Actor::ProcessInWater(hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime)
+	{
+		return RelocateVirtual<decltype(&Actor::ProcessInWater)>(0x9C, 0x9D, this, a_collidable, a_waterHeight, a_deltaTime);
+	}
+
+	bool Actor::ApplyCurrent(float a_velocityTime, const hkVector4& a_velocity)
+	{
+		return RelocateVirtual<decltype(&Actor::ApplyCurrent)>(0x9D, 0x9E, this, a_velocityTime, a_velocity);
+	}
+
+	TESAmmo* Actor::GetCurrentAmmo() const
+	{
+		return RelocateVirtual<decltype(&Actor::GetCurrentAmmo)>(0x9F, 0xA0, this);
+	}
+
+	void Actor::UnequipItem(std::uint64_t a_arg1, TESBoundObject* a_object)
+	{
+		RelocateVirtual<decltype(&Actor::UnequipItem)>(0xA1, 0xA2, this, a_arg1, a_object);
+	}
+
 	void Actor::Unk_A2()
 	{
 		RelocateVirtual<decltype(&Actor::Unk_A2)>(0x0A2, 0x0A3, this);

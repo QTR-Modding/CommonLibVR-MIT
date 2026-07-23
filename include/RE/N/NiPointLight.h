@@ -35,8 +35,9 @@ namespace RE
 		bool                 IsEqual(NiObject* a_object) override;               // 1C
 		static NiPointLight* Create()
 		{
-			auto light = malloc<NiPointLight>();
-			std::memset((void*)light, 0, sizeof(NiPointLight));
+			// sizeof(NiPointLight) is wrong under SKYRIM_CROSS_VR (runtime-data members
+			// stripped); allocate the real per-runtime size. See malloc_runtime.
+			auto light = malloc_runtime<NiPointLight>(0x150, 0x178);
 			if (light) {
 				light->Ctor();
 			}

@@ -48,6 +48,7 @@ namespace RE
 	class NiAVObject;
 	class NiControllerManager;
 	class NiControllerSequence;
+	class NiMatrix3;
 	class NiNode;
 	class NiObject;
 	class Projectile;
@@ -312,26 +313,35 @@ namespace RE
 		virtual void                                            SetBiped(const BSTSmartPointer<BipedAnim>& a_biped);                                                                                                                                                         // 81 - { return; }																																																																			 // Virtual functions defined in TESObjectREFR after the vtable structure becomes different in VR.
 #if defined(EXCLUSIVE_SKYRIM_VR)
 		SKYRIM_REL_VR_VIRTUAL void AttachWeapon(RE::TESObjectWEAP* a_weapon, bool attachToShieldHand);  // 82 - Virtual in VR, non-virtual in SE/AE. Shield hand may be just left hand?
+#elif defined(SKYRIM_CROSS_VR)
+		// Virtual on VR only (real slot 0x82); SE/AE calls it directly (non-virtually) and
+		// CommonLib doesn't bind that address, so this only reaches the real implementation
+		// when actually running under VR -- a no-op otherwise.
+		void AttachWeapon(RE::TESObjectWEAP* a_weapon, bool attachToShieldHand)
+		{
+			if (REL::Module::IsVR()) {
+				REL::RelocateVirtual<decltype(&TESObjectREFR::AttachWeapon)>(0, 0x82, this, a_weapon, attachToShieldHand);
+			}
+		}
 #endif
-		SKYRIM_REL_VR_VIRTUAL void RemoveWeapon(BIPED_OBJECT equipIndex);  // 82 - { return; }
-		SKYRIM_REL_VR_VIRTUAL void Unk_83(void);                           // 83 - { return; }
-#if defined(EXCLUSIVE_SKYRIM_VR)
-		SKYRIM_REL_VR_VIRTUAL void Unk_84(void);
-#endif
-		SKYRIM_REL_VR_VIRTUAL void                         SetObjectReference(TESBoundObject* a_object);                                         // 84 - sets flag 24 if the object has destructibles
-		SKYRIM_REL_VR_VIRTUAL void                         MoveHavok(bool a_forceRec);                                                           // 85
-		SKYRIM_REL_VR_VIRTUAL void                         GetLinearVelocity(NiPoint3& a_velocity) const;                                        // 86
-		SKYRIM_REL_VR_VIRTUAL void                         SetActionComplete(bool a_set);                                                        // 87 - { return; }
-		SKYRIM_REL_VR_VIRTUAL void                         SetMovementComplete(bool a_set);                                                      // 88 - { return; }
-		SKYRIM_REL_VR_VIRTUAL void                         Disable();                                                                            // 89
-		SKYRIM_REL_VR_VIRTUAL void                         ResetInventory(bool a_leveledOnly);                                                   // 8A
-		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL NiNode*        GetFireNode();                                                                        // 8B - { return 0; }
-		SKYRIM_REL_VR_VIRTUAL void                         SetFireNode(NiNode* a_fireNode);                                                      // 8C - { return; }
-		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL NiAVObject*    GetCurrent3D() const;                                                                 // 8D - { return Get3D2(); }
-		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL Explosion*     AsExplosion();                                                                        // 8E - { return 0; }
-		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL Projectile*    AsProjectile();                                                                       // 8F - { return 0; }
-		SKYRIM_REL_VR_VIRTUAL bool                         OnAddCellPerformQueueReference(TESObjectCELL& a_cell) const;                          // 90 - { return true; }
-		SKYRIM_REL_VR_VIRTUAL void                         DoMoveToHigh();                                                                       // 91 - { return; }
+		SKYRIM_REL_VR_VIRTUAL void                      RemoveWeapon(BIPED_OBJECT equipIndex);          // 82 - { return; }
+		SKYRIM_REL_VR_VIRTUAL void                      Unk_83(void);                                   // 83 - { return; }
+		SKYRIM_REL_VR_VIRTUAL void                      SetObjectReference(TESBoundObject* a_object);   // 84 - sets flag 24 if the object has destructibles
+		SKYRIM_REL_VR_VIRTUAL void                      MoveHavok(bool a_forceRec);                     // 85
+		SKYRIM_REL_VR_VIRTUAL void                      GetLinearVelocity(NiPoint3& a_velocity) const;  // 86
+		SKYRIM_REL_VR_VIRTUAL void                      SetActionComplete(bool a_set);                  // 87 - { return; }
+		SKYRIM_REL_VR_VIRTUAL void                      SetMovementComplete(bool a_set);                // 89 - { return; }
+		SKYRIM_REL_VR_VIRTUAL void                      Disable();                                      // 8A
+		SKYRIM_REL_VR_VIRTUAL void                      ResetInventory(bool a_leveledOnly);             // 8B
+		SKYRIM_REL_VR_VIRTUAL void                      Unk_8C(void);                                   // 8C - real slot; checks a field at +0x430, conditionally calls cleanup
+		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL NiNode*     GetFireNode();                                  // 8D - { return 0; }
+		SKYRIM_REL_VR_VIRTUAL void                      SetFireNode(NiNode* a_fireNode);                // 8E - { return; }
+		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL NiAVObject* GetCurrent3D() const;                           // 8F - { return Get3D2(); }
+		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL Explosion*  AsExplosion();                                  // 90 - { return 0; }
+		// UNVERIFIED - unverified past this point (2026-07); slots need re-confirming against SkyrimVR.exe
+		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL Projectile*    AsProjectile();                                                                       // UNVERIFIED - { return 0; }
+		SKYRIM_REL_VR_VIRTUAL bool                         OnAddCellPerformQueueReference(TESObjectCELL& a_cell) const;                          // UNVERIFIED - { return true; }
+		SKYRIM_REL_VR_VIRTUAL void                         DoMoveToHigh();                                                                       // UNVERIFIED - { return; }
 		SKYRIM_REL_VR_VIRTUAL void                         TryMoveToMiddleLow();                                                                 // 92 - { return; }
 		SKYRIM_REL_VR_VIRTUAL bool                         TryChangeSkyCellActorsProcessLevel();                                                 // 93 - { return false; }
 		SKYRIM_REL_VR_VIRTUAL void                         Unk_94(void);                                                                         // 94 - { return; }
@@ -414,6 +424,7 @@ namespace RE
 		[[nodiscard]] constexpr float                   GetPositionX() const noexcept { return data.location.x; }
 		[[nodiscard]] constexpr float                   GetPositionY() const noexcept { return data.location.y; }
 		[[nodiscard]] constexpr float                   GetPositionZ() const noexcept { return data.location.z; }
+		[[nodiscard]] NiMatrix3*                        GetRotationMatrix(NiMatrix3* a_out) const;
 		[[nodiscard]] float                             GetScale() const;
 		[[nodiscard]] NiControllerSequence*             GetSequence(stl::zstring a_name) const;
 		[[nodiscard]] std::uint32_t                     GetStealValue(const InventoryEntryData* a_entryData, std::uint32_t a_numItems, bool a_useMult) const;
@@ -502,7 +513,6 @@ namespace RE
 #if defined(EXCLUSIVE_SKYRIM_SE) || defined(EXCLUSIVE_SKYRIM_VR)
 		RUNTIME_DATA_CONTENT;  // 0x88
 #elif defined(EXCLUSIVE_SKYRIM_AE)
-		// No padding needed - ExtraDataList naturally ends at 0x90
 		RUNTIME_DATA_CONTENT;  // 0x90
 #endif
 
@@ -511,6 +521,6 @@ namespace RE
 		InventoryChanges* MakeInventoryChanges();
 		void              PlayAnimation_Impl(NiControllerManager* a_manager, NiControllerSequence* a_toSeq, NiControllerSequence* a_fromSeq, bool a_arg4 = false);
 	};
-	STATIC_ASSERT_SIZE(TESObjectREFR, 0x98, 0x90, 0x98);
+	STATIC_ASSERT_SIZE(TESObjectREFR, 0x98, 0xA0, 0x98);
 }
 #undef RUNTIME_DATA_CONTENT

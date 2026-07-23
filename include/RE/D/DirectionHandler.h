@@ -4,6 +4,8 @@
 
 namespace RE
 {
+	class VrWandTouchpadPositionEvent;
+
 	struct DirectionHandler : public MenuEventHandler
 	{
 	public:
@@ -13,9 +15,17 @@ namespace RE
 		~DirectionHandler() override;  // 00
 
 		// override (MenuEventHandler)
-		bool CanProcess(InputEvent* a_event) override;              // 01
-		bool ProcessThumbstick(ThumbstickEvent* a_event) override;  // 03
-		bool ProcessButton(ButtonEvent* a_event) override;          // 05
+		bool CanProcess(InputEvent* a_event) override;  // 01
+#ifndef SKYRIM_CROSS_VR
+		bool ProcessThumbstick(ThumbstickEvent* a_event) override;  // 03 (VR 06)
+		bool ProcessButton(ButtonEvent* a_event) override;          // 05 (VR 08)
+#endif
+#if defined(EXCLUSIVE_SKYRIM_VR)
+		bool ProcessVrWandTouchpadPosition([[maybe_unused]] VrWandTouchpadPositionEvent* a_event) override
+		{
+			return false;
+		}  // VR 03
+#endif
 
 		// members
 		float         nextRepeat;                // 10

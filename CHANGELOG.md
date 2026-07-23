@@ -1,3 +1,170 @@
+## [4.39.2](https://github.com/alandtse/CommonLibVR/compare/v4.39.1...v4.39.2) (2026-07-22)
+
+## [4.39.1](https://github.com/alandtse/CommonLibVR/compare/v4.39.0...v4.39.1) (2026-07-21)
+
+## [4.39.0](https://github.com/alandtse/CommonLibVR/compare/v4.38.0...v4.39.0) (2026-07-20)
+
+## [4.38.0](https://github.com/alandtse/CommonLibVR/compare/v4.37.0...v4.38.0) (2026-07-17)
+
+## [4.37.0](https://github.com/alandtse/CommonLibVR/compare/v4.36.5...v4.37.0) (2026-07-13)
+
+## [4.36.5](https://github.com/alandtse/CommonLibVR/compare/v4.36.4...v4.36.5) (2026-07-12)
+
+## [4.36.4](https://github.com/alandtse/CommonLibVR/compare/v4.36.3...v4.36.4) (2026-07-12)
+
+## [4.36.3](https://github.com/alandtse/CommonLibVR/compare/v4.36.2...v4.36.3) (2026-07-11)
+
+## [4.36.2](https://github.com/alandtse/CommonLibVR/compare/v4.36.1...v4.36.2) (2026-07-06)
+
+## [4.36.1](https://github.com/alandtse/CommonLibVR/compare/v4.36.0...v4.36.1) (2026-07-06)
+
+## [4.36.0](https://github.com/alandtse/CommonLibVR/compare/v4.35.2...v4.36.0) (2026-07-06)
+
+## [4.35.2](https://github.com/alandtse/CommonLibVR/compare/v4.35.1...v4.35.2) (2026-07-03)
+
+## [4.35.1](https://github.com/alandtse/CommonLibVR/compare/v4.35.0...v4.35.1) (2026-07-03)
+
+## [4.35.0](https://github.com/alandtse/CommonLibVR/compare/v4.34.1...v4.35.0) (2026-07-02)
+
+## [4.34.1](https://github.com/alandtse/CommonLibVR/compare/v4.34.0...v4.34.1) (2026-07-02)
+
+## [4.34.0](https://github.com/alandtse/CommonLibVR/compare/v4.33.2...v4.34.0) (2026-07-02)
+
+## [4.33.2](https://github.com/alandtse/CommonLibVR/compare/v4.33.1...v4.33.2) (2026-07-01)
+
+## [4.33.1](https://github.com/alandtse/CommonLibVR/compare/v4.33.0...v4.33.1) (2026-06-29)
+
+## [4.33.0](https://github.com/alandtse/CommonLibVR/compare/v4.32.0...v4.33.0) (2026-06-27)
+
+## [4.32.0](https://github.com/alandtse/CommonLibVR/compare/v4.31.0...v4.32.0) (2026-06-27)
+
+## [4.31.0](https://github.com/alandtse/CommonLibVR/compare/v4.30.0...v4.31.0) (2026-06-20)
+
+### Features
+
+* **vr:** type BSOpenVRControllerDevice controller state ([#190](https://github.com/alandtse/CommonLibVR/issues/190)) ([1864851](https://github.com/alandtse/CommonLibVR/commit/1864851eafd11d4f829fb8666640806c647a4253))
+
+## [4.30.0](https://github.com/alandtse/CommonLibVR/compare/v4.29.0...v4.30.0) (2026-06-20)
+
+### Features
+
+* add BSIStream with DecompressLipData ([#188](https://github.com/alandtse/CommonLibVR/issues/188)) ([9609035](https://github.com/alandtse/CommonLibVR/commit/96090356bf15751e819e5adcf78f3f8b4ed06cec))
+
+## [4.29.0](https://github.com/alandtse/CommonLibVR/compare/v4.28.0...v4.29.0) (2026-06-17)
+
+### Features
+
+* **playercharacter:** add UsePoisonFromInventory ([#186](https://github.com/alandtse/CommonLibVR/issues/186)) ([3a2b0e5](https://github.com/alandtse/CommonLibVR/commit/3a2b0e5f2d91183fc0d659852b5d8b5ba35ec83b))
+* **re:** add ShadowSceneNode::ResetScene ([#185](https://github.com/alandtse/CommonLibVR/issues/185)) ([c4ce876](https://github.com/alandtse/CommonLibVR/commit/c4ce8760be5037ce931f2000451d448039138dc0))
+
+## [4.28.0](https://github.com/alandtse/CommonLibVR/compare/v4.27.0...v4.28.0) (2026-06-14)
+
+### Features
+
+* type discovered struct fields from Ghidra ([#184](https://github.com/alandtse/CommonLibVR/issues/184)) ([9813abe](https://github.com/alandtse/CommonLibVR/commit/9813abefd0c003e761940f74a01e8055adf97e30))
+
+### Bug Fixes
+
+* resolve packed enum IDs per-runtime ([#179](https://github.com/alandtse/CommonLibVR/issues/179)) ([fa60781](https://github.com/alandtse/CommonLibVR/commit/fa60781748569344fab2f51de1dd43ff71a28b3e))
+
+## [4.27.0](https://github.com/alandtse/CommonLibVR/compare/v4.26.2...v4.27.0) (2026-06-12)
+
+### Features
+
+* add actor func, misc cleanup ([5904b41](https://github.com/alandtse/CommonLibVR/commit/5904b4179c0dd28555b87e3a2bb689170fb249f8))
+* add actor funcs ([03c49b5](https://github.com/alandtse/CommonLibVR/commit/03c49b5bfc031a137bc20d93fb6785ad0f8db1c0))
+* add adjustments from Clib-NG ([1239701](https://github.com/alandtse/CommonLibVR/commit/1239701a505f3da5604d1f013b66c9018917a061))
+* add BGSConstructFormsInAllFilesMap::count ([b19c377](https://github.com/alandtse/CommonLibVR/commit/b19c37732f13951e1dc753262ff9c1966d3ba29a))
+* merge po3 ([cf748d1](https://github.com/alandtse/CommonLibVR/commit/cf748d16f06c9442623f2e7f4fd4ff72d9c00f82))
+* merge po3 ([d5f523c](https://github.com/alandtse/CommonLibVR/commit/d5f523cdf975064319f6c6bbdc34aada1007f5a0))
+* player controls RE ([f0d2071](https://github.com/alandtse/CommonLibVR/commit/f0d2071e584547f85d9b603ec6b3a6101426b11b))
+* RE MessageBox ([de3fac0](https://github.com/alandtse/CommonLibVR/commit/de3fac052bf1570320849c605dd2b79eac1dc526))
+
+## [4.26.2](https://github.com/alandtse/CommonLibVR/compare/v4.26.1...v4.26.2) (2026-06-06)
+
+### Bug Fixes
+
+* MenuEventHandler VR vtable shift ([#177](https://github.com/alandtse/CommonLibVR/issues/177)) ([6b48ca9](https://github.com/alandtse/CommonLibVR/commit/6b48ca992424b3fa9b1a8c61758244da531b6ed1))
+* remove phantom ISGraphicsTextureFilterMode IS effect ([#178](https://github.com/alandtse/CommonLibVR/issues/178)) ([5126c68](https://github.com/alandtse/CommonLibVR/commit/5126c68e8610b1b24a6a4ca092912e4b0afebf17))
+
+## [4.26.1](https://github.com/alandtse/CommonLibVR/compare/v4.26.0...v4.26.1) (2026-06-05)
+
+### Bug Fixes
+
+* **prebuilt:** support multi-config generators ([#175](https://github.com/alandtse/CommonLibVR/issues/175)) ([3b7207a](https://github.com/alandtse/CommonLibVR/commit/3b7207a02f250cecdebbcac8c31292ff00c6c0e7))
+
+## [4.26.0](https://github.com/alandtse/CommonLibVR/compare/v4.25.2...v4.26.0) (2026-06-05)
+
+### Features
+
+* **prebuilt:** superset, multi-config, CRT guard ([#174](https://github.com/alandtse/CommonLibVR/issues/174)) ([66f257a](https://github.com/alandtse/CommonLibVR/commit/66f257a44ba4041871730803ef8df4d8fe905932)), closes [#173](https://github.com/alandtse/CommonLibVR/issues/173) [#173](https://github.com/alandtse/CommonLibVR/issues/173) [open-shaders#103](https://github.com/alandtse/open-shaders/issues/103) [EngineFixesSkyrim64#10](https://github.com/alandtse/EngineFixesSkyrim64/issues/10)
+
+## [4.25.2](https://github.com/alandtse/CommonLibVR/compare/v4.25.1...v4.25.2) (2026-06-04)
+
+### Bug Fixes
+
+* allocate correct size in Create() ([#172](https://github.com/alandtse/CommonLibVR/issues/172)) ([e85f13b](https://github.com/alandtse/CommonLibVR/commit/e85f13b9a0655f5d24bc532c90dbd392a613a07a)), closes [#120](https://github.com/alandtse/CommonLibVR/issues/120)
+
+## [4.25.1](https://github.com/alandtse/CommonLibVR/compare/v4.25.0...v4.25.1) (2026-06-04)
+
+### Bug Fixes
+
+* **prebuilt:** auto-fetch in CI; relax options gate ([#171](https://github.com/alandtse/CommonLibVR/issues/171)) ([a988eaa](https://github.com/alandtse/CommonLibVR/commit/a988eaac26746c93f19df2bb0bfd7736a6d6d6d5))
+
+## [4.25.0](https://github.com/alandtse/CommonLibVR/compare/v4.24.0...v4.25.0) (2026-06-04)
+
+### Features
+
+* add hkpProcessCollisionInput + hkpAgent3ProcessInput ([#165](https://github.com/alandtse/CommonLibVR/issues/165)) ([5da20d8](https://github.com/alandtse/CommonLibVR/commit/5da20d8e70d8222f299d802fffae02f772646a55))
+
+## [4.24.0](https://github.com/alandtse/CommonLibVR/compare/v4.23.0...v4.24.0) (2026-06-04)
+
+### Features
+
+* **build:** auto-fetch prebuilt CommonLib on clean release tags (cmake) ([#170](https://github.com/alandtse/CommonLibVR/issues/170)) ([47c49c2](https://github.com/alandtse/CommonLibVR/commit/47c49c20570017f51abd698fd6171b18fedfd3e1)), closes [#169](https://github.com/alandtse/CommonLibVR/issues/169)
+
+## [4.23.0](https://github.com/alandtse/CommonLibVR/compare/v4.22.0...v4.23.0) (2026-06-04)
+
+### Features
+
+* **build:** auto-fetch prebuilt CommonLib on clean release tags (xmake) ([#169](https://github.com/alandtse/CommonLibVR/issues/169)) ([e6dea13](https://github.com/alandtse/CommonLibVR/commit/e6dea1319a21f2d8f0a0e051076275bc7f93b4e0)), closes [#167](https://github.com/alandtse/CommonLibVR/issues/167)
+
+## [4.22.0](https://github.com/alandtse/CommonLibVR/compare/v4.21.1...v4.22.0) (2026-06-03)
+
+### Features
+
+* **build:** publish prebuilt static-library bundles for xmake consumers ([#167](https://github.com/alandtse/CommonLibVR/issues/167)) ([32e1826](https://github.com/alandtse/CommonLibVR/commit/32e182628ad14d00d1f5a64d6ab6c9ede8be2e97))
+
+## [4.21.1](https://github.com/alandtse/CommonLibVR/compare/v4.21.0...v4.21.1) (2026-06-01)
+
+### Bug Fixes
+
+* **vr:** niskindata and bsgeometry runtime layouts ([#162](https://github.com/alandtse/CommonLibVR/issues/162)) ([2f53553](https://github.com/alandtse/CommonLibVR/commit/2f535530072827b8e8961f853232bec6b219ecff))
+
+## [4.21.0](https://github.com/alandtse/CommonLibVR/compare/v4.20.0...v4.21.0) (2026-05-31)
+
+### Features
+
+* MessageBoxMenu API + LoadGameMissingContentCallBack ([#160](https://github.com/alandtse/CommonLibVR/issues/160)) ([bb2c5c0](https://github.com/alandtse/CommonLibVR/commit/bb2c5c0072811f4dd40b8fb172f7fe3d892b2730))
+
+## [4.20.0](https://github.com/alandtse/CommonLibVR/compare/v4.19.0...v4.20.0) (2026-05-30)
+
+### Features
+
+* **navmesh:** name path-builder and navmesh-search class hierarchy ([#151](https://github.com/alandtse/CommonLibVR/issues/151)) ([d191aec](https://github.com/alandtse/CommonLibVR/commit/d191aec7babedbe62c37d1da938d2cf8ad188ae0))
+* **PlayerCharacter:** name VR layout, AE direct access, and VRPlayerHandData ([#152](https://github.com/alandtse/CommonLibVR/issues/152)) ([70d898a](https://github.com/alandtse/CommonLibVR/commit/70d898a31c1232f3de7bd45005883c98674376e6))
+
+### Bug Fixes
+
+* MagicTarget offsets ([#157](https://github.com/alandtse/CommonLibVR/issues/157)) ([2bedea6](https://github.com/alandtse/CommonLibVR/commit/2bedea60fe6db3e7bfde5b1488a506ece07dd8bd))
+* remove redundant hkMemoryRouter.cpp ([#156](https://github.com/alandtse/CommonLibVR/issues/156)) ([2091b97](https://github.com/alandtse/CommonLibVR/commit/2091b97620b6e9bc1402ca3e114f57146beab696))
+
+## [4.19.0](https://github.com/alandtse/CommonLibVR/compare/v4.18.0...v4.19.0) (2026-05-29)
+
+### Features
+
+* **BSEffectShaderProperty:** name emittanceColor and render passes ([#154](https://github.com/alandtse/CommonLibVR/issues/154)) ([adcd35c](https://github.com/alandtse/CommonLibVR/commit/adcd35cbd1bbf14a61a0767a5f72bd04d952662f))
+
 ## [4.18.0](https://github.com/alandtse/CommonLibVR/compare/v4.17.1...v4.18.0) (2026-05-10)
 
 ### Features

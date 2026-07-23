@@ -3,6 +3,7 @@
 #ifdef ENABLE_SKYRIM_VR
 
 #	include "RE/B/BSTrackedControllerDevice.h"
+#	include "RE/N/NiPoint2.h"
 
 namespace RE
 {
@@ -107,20 +108,41 @@ namespace RE
 			return IsLeftHandedMode() ? !isPhysSecondary : isPhysSecondary;
 		}
 
-	private:
-#	if defined(EXCLUSIVE_SKYRIM_VR)
-		std::uint64_t unk80[0x16];  // 080
-		std::uint32_t unk130;       // 130
-		std::uint32_t unk134;       // 134
-		std::uint32_t unk138;       // 138
-		std::uint32_t unk13C;       // 13C
-		std::uint32_t unk140;       // 140
-		std::uint32_t unk144;       // 144
-		std::uint32_t unk148;       // 148
-		std::uint32_t unk14C;       // 14C
+		// Thumbstick / trackpad (rAxis[0]) from the last IVRSystem poll, x/y in [-1, 1]. Reads the
+		// typed currentState via GetRuntimeData() so it resolves correctly in every build: the
+		// accessor relocates to the verified VR offset (0xC0) regardless of the C++ base-class size,
+		// which shrinks in SKYRIM_CROSS_VR builds.
+		[[nodiscard]] NiPoint2 GetThumbstick() const noexcept
+		{
+			const auto& axis = GetRuntimeData().currentState.rAxis[0];
+			return { axis.x, axis.y };
+		}
+
+		// Device state block, maintained by Poll() via IVRSystem (see BSOpenVRControllerDevice::Poll
+		// RE). Begins at 0x88 (right after BSTrackedControllerDevice in VR); reached via the runtime
+		// accessor so cross-runtime builds, where the base classes drop their VR-only members from the
+		// C++ layout, still land on the engine's real offsets.
+		struct RUNTIME_DATA
+		{
+#	define RUNTIME_DATA_CONTENT                             \
+		std::uint64_t           prevButtonPressed; /* 088 */ \
+		std::uint64_t           prevButtonTouched; /* 090 */ \
+		vr::VRControllerAxis_t  prevAxis[5];       /* 098 */ \
+		vr::VRControllerState_t currentState;      /* 0C0 */ \
+		std::uint64_t           unk100[7];         /* 100 */ \
+		std::uint32_t           swipe[8];          /* 138 */
+            RUNTIME_DATA_CONTENT
+		};
+		static_assert(sizeof(RUNTIME_DATA) == 0xD0);
+
+		RUNTIME_DATA_ACCESSOR(RUNTIME_DATA, 0x88, 0x88);
+#	ifndef SKYRIM_CROSS_VR
+		// members
+		RUNTIME_DATA_CONTENT
 #	endif
 	};
 	STATIC_ASSERT_SIZE(BSOpenVRControllerDevice, SIZE_UNDEFINED, SIZE_UNDEFINED, 0x158, SIZE_UNDEFINED, SIZE_UNDEFINED);
+#	undef RUNTIME_DATA_CONTENT
 
 	// Returns a canonical string name for a given OpenVR controller key code
 	inline const char* GetOpenVRButtonName(std::uint32_t keyCode)

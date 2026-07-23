@@ -22,7 +22,7 @@ endif()
 project(
 	CommonLibSSE
 	LANGUAGES CXX
-	VERSION 4.18.0
+	VERSION 4.39.2
 )
 
 include(CheckIPOSupported)
@@ -35,6 +35,82 @@ endif()
 find_package(spdlog CONFIG REQUIRED)
 find_path(RAPIDCSV_INCLUDE_DIRS "rapidcsv.h")
 find_package(directxtk CONFIG REQUIRED)
+
+# Prefer a published prebuilt binary over a ~16-min source compile (clean release tag,
+# in CI or with COMMONLIB_PREBUILT / COMMONLIB_PREBUILT_DIR) — see cmake/Prebuilt.cmake.
+# Runs inside the consumer's add_subdirectory build, so the IMPORTED target points at the
+# bundle's local paths — no install/export and none of the relocatability that find_package
+# would require. Falls through to the source build on anything unsafe.
+include(cmake/Prebuilt.cmake)
+commonlib_resolve_prebuilt(COMMONLIB_PREBUILT_RESOLVED)
+if(COMMONLIB_PREBUILT_RESOLVED)
+	message(STATUS "CommonLibSSE: linking prebuilt binary from ${COMMONLIB_PREBUILT_RESOLVED}")
+	add_library("${PROJECT_NAME}" STATIC IMPORTED GLOBAL)
+	# Pin the lib to Release and map the other release-like configs onto it. Point Debug at a
+	# non-existent sentinel rather than nothing: a multi-config generator validates every config
+	# at generate time, so an empty Debug map fails the whole configure — the sentinel keeps
+	# generate happy while making a Debug *build* fail loudly with a self-documenting name (the
+	# Release-only bundle can't serve Debug; build it from source).
+	set_target_properties(
+		"${PROJECT_NAME}" PROPERTIES
+		IMPORTED_CONFIGURATIONS "RELEASE;DEBUG"
+		IMPORTED_LOCATION_RELEASE "${COMMONLIB_PREBUILT_RESOLVED}/lib/CommonLibSSE.lib"
+		IMPORTED_LOCATION_DEBUG "${COMMONLIB_PREBUILT_RESOLVED}/lib/CommonLibSSE-debug-build-from-source.lib"
+		MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+		MAP_IMPORTED_CONFIG_MINSIZEREL Release
+	)
+	add_library("${PROJECT_NAME}::${PROJECT_NAME}" ALIAS "${PROJECT_NAME}")
+
+	target_compile_features("${PROJECT_NAME}" INTERFACE cxx_std_23)
+	target_include_directories(
+		"${PROJECT_NAME}" INTERFACE
+		"${COMMONLIB_PREBUILT_RESOLVED}/include"
+		"${COMMONLIB_PREBUILT_RESOLVED}/extern/openvr/headers"
+	)
+	# Skyrim runtime set is layout-critical and required by the resolver, so define it
+	# unconditionally to match the lib.
+	target_compile_definitions(
+		"${PROJECT_NAME}" INTERFACE
+		WINVER=0x0601
+		_WIN32_WINNT=0x0601
+		ENABLE_SKYRIM_SE=1
+		ENABLE_SKYRIM_AE=1
+		ENABLE_SKYRIM_VR=1
+		HAS_SKYRIM_MULTI_TARGETING=1
+	)
+	# The lib bakes every REX config + xbyak, but they're additive — expose only the ones the
+	# consumer opted into, so it gets exactly the API (and headers) it asked for.
+	foreach(_opt REX_OPTION_INI REX_OPTION_JSON REX_OPTION_TOML SKSE_SUPPORT_XBYAK)
+		if(${_opt})
+			target_compile_definitions("${PROJECT_NAME}" INTERFACE ${_opt}=1)
+		endif()
+	endforeach()
+	if(MSVC)
+		target_compile_options(
+			"${PROJECT_NAME}" INTERFACE
+			/Zc:preprocessor
+			/wd4005 /wd4061 /wd4068 /wd4200 /wd4201 /wd4265 /wd4266 /wd4371
+			/wd4514 /wd4582 /wd4583 /wd4623 /wd4625 /wd4626 /wd4702 /wd4710
+			/wd4711 /wd4820 /wd4996 /wd5026 /wd5027 /wd5045 /wd5053 /wd5204 /wd5220
+		)
+	endif()
+	target_link_libraries(
+		"${PROJECT_NAME}" INTERFACE
+		spdlog::spdlog
+		Microsoft::DirectXTK
+		Advapi32.lib
+		bcrypt.lib
+		D3D11.lib
+		d3dcompiler.lib
+		Dbghelp.lib
+		DXGI.lib
+		Ole32.lib
+		Version.lib
+		"${COMMONLIB_PREBUILT_RESOLVED}/lib/openvr_api.lib"
+	)
+	include(cmake/CommonLibSSE.cmake)  # add_commonlibsse_plugin() helper for consumers
+	return()
+endif()
 
 include(cmake/sourcelist.cmake)
 include(cmake/testlist.cmake)

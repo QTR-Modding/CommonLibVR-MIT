@@ -35,8 +35,9 @@ namespace RE
 
 		static NiDirectionalLight* Create()
 		{
-			auto light = malloc<NiDirectionalLight>();
-			std::memset((void*)light, 0, sizeof(NiDirectionalLight));
+			// sizeof(NiDirectionalLight) is wrong under SKYRIM_CROSS_VR (runtime-data
+			// members stripped); allocate the real per-runtime size. See malloc_runtime.
+			auto light = malloc_runtime<NiDirectionalLight>(0x158, 0x180);
 			if (light) {
 				light->Ctor();
 			}

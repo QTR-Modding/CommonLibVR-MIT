@@ -339,30 +339,29 @@ namespace RE
 		bool                                 ShouldSaveAnimationOnSaving() const override;                                                                                                                                                                         // 07B
 		bool                                 ShouldPerformRevert() const override;                                                                                                                                                                                 // 07C
 		void                                 UpdateAnimation(float a_delta) override;                                                                                                                                                                              // 07D
-#ifndef SKYRIM_CROSS_VR
-		// Override functions past where Skyrim VR breaks compatibility.
-		void                   RemoveWeapon(BIPED_OBJECT equipIndex) override;                                                // 082
-		void                   SetObjectReference(TESBoundObject* a_object) override;                                         // 084
-		void                   MoveHavok(bool a_forceRec) override;                                                           // 085
-		void                   GetLinearVelocity(NiPoint3& a_velocity) const override;                                        // 086
-		void                   SetActionComplete(bool a_set) override;                                                        // 087
-		void                   Disable() override;                                                                            // 089
-		void                   ResetInventory(bool a_leveledOnly) override;                                                   // 08A
-		NiNode*                GetFireNode() override;                                                                        // 08B
-		void                   SetFireNode(NiNode* a_fireNode) override;                                                      // 08C
-		bool                   OnAddCellPerformQueueReference(TESObjectCELL& a_cell) const override;                          // 090
-		void                   DoMoveToHigh() override;                                                                       // 091
-		void                   TryMoveToMiddleLow() override;                                                                 // 092
-		bool                   TryChangeSkyCellActorsProcessLevel() override;                                                 // 093
-		void                   TryUpdateActorLastSeenTime() override;                                                         // 095
-		void                   Unk_96(void) override;                                                                         // 096
-		void                   SetParentCell(TESObjectCELL* a_cell) override;                                                 // 098
-		[[nodiscard]] bool     IsDead(bool a_notEssential = true) const override;                                             // 099
-		bool                   ProcessInWater(hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime) override;  // 09C
-		bool                   ApplyCurrent(float a_velocityTime, const hkVector4& a_velocity) override;                      // 09D
-		[[nodiscard]] TESAmmo* GetCurrentAmmo() const override;                                                               // 09E
-		void                   UnequipItem(std::uint64_t a_arg1, TESBoundObject* a_object) override;                          // 0A1
-#endif
+		// VR inserts extra vtable entries relative to SE/AE past this point, so a single
+		// compile-time ordinal can't address all three runtimes; each function below resolves
+		// its real per-runtime slot via RelocateVirtual instead.
+		SKYRIM_REL_VR_VIRTUAL void                   RemoveWeapon(BIPED_OBJECT equipIndex);                                                // SE/AE 0x82, VR 0x83
+		SKYRIM_REL_VR_VIRTUAL void                   SetObjectReference(TESBoundObject* a_object);                                         // SE/AE 0x84, VR 0x85
+		SKYRIM_REL_VR_VIRTUAL void                   MoveHavok(bool a_forceRec);                                                           // SE/AE 0x85, VR 0x86
+		SKYRIM_REL_VR_VIRTUAL void                   GetLinearVelocity(NiPoint3& a_velocity) const;                                        // SE/AE 0x86, VR 0x87
+		SKYRIM_REL_VR_VIRTUAL void                   SetActionComplete(bool a_set);                                                        // SE/AE 0x87, VR 0x88
+		SKYRIM_REL_VR_VIRTUAL void                   Disable();                                                                            // SE/AE 0x89, VR 0x8A
+		SKYRIM_REL_VR_VIRTUAL void                   ResetInventory(bool a_leveledOnly);                                                   // SE/AE 0x8A, VR 0x8B
+		SKYRIM_REL_VR_VIRTUAL NiNode*                GetFireNode();                                                                        // SE/AE 0x8C, VR 0x8D
+		SKYRIM_REL_VR_VIRTUAL void                   SetFireNode(NiNode* a_fireNode);                                                      // SE/AE 0x8D, VR 0x8E
+		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL bool     OnAddCellPerformQueueReference(TESObjectCELL& a_cell) const;                          // SE/AE 0x90, VR 0x91
+		SKYRIM_REL_VR_VIRTUAL void                   DoMoveToHigh();                                                                       // SE/AE 0x91, VR 0x92
+		SKYRIM_REL_VR_VIRTUAL void                   TryMoveToMiddleLow();                                                                 // SE/AE 0x92, VR 0x93
+		SKYRIM_REL_VR_VIRTUAL bool                   TryChangeSkyCellActorsProcessLevel();                                                 // SE/AE 0x93, VR 0x94
+		SKYRIM_REL_VR_VIRTUAL void                   TryUpdateActorLastSeenTime();                                                         // SE/AE 0x95, VR 0x96
+		SKYRIM_REL_VR_VIRTUAL void                   SetParentCell(TESObjectCELL* a_cell);                                                 // SE/AE 0x98, VR 0x99
+		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL bool     IsDead(bool a_notEssential = true) const;                                             // SE/AE 0x99, VR 0x9A
+		SKYRIM_REL_VR_VIRTUAL bool                   ProcessInWater(hkpCollidable* a_collidable, float a_waterHeight, float a_deltaTime);  // SE/AE 0x9C, VR 0x9D
+		SKYRIM_REL_VR_VIRTUAL bool                   ApplyCurrent(float a_velocityTime, const hkVector4& a_velocity);                      // SE/AE 0x9D, VR 0x9E
+		[[nodiscard]] SKYRIM_REL_VR_VIRTUAL TESAmmo* GetCurrentAmmo() const;                                                               // SE/AE 0x9F, VR 0xA0
+		SKYRIM_REL_VR_VIRTUAL void                   UnequipItem(std::uint64_t a_arg1, TESBoundObject* a_object);                          // SE/AE 0xA1, VR 0xA2
 
 		// override (MagicTarget)
 #ifndef ENABLE_SKYRIM_VR
@@ -519,7 +518,8 @@ namespace RE
 		void                                    AllowBleedoutDialogue(bool a_canTalk);
 		void                                    AllowPCDialogue(bool a_talk);
 		void                                    CastPermanentMagic(bool a_wornItemEnchantments, bool a_baseSpells, bool a_raceSpells, bool a_everyActorAbility);
-		[[nodiscard]] NiAVObject*               CalculateLOS(NiPoint3* a_targetPosition, NiPoint3* a_rayHitPosition, float a_viewCone);
+		[[nodiscard]] ACTOR_LOS_LOCATION        CalculateLOS(Actor* a_target, float a_viewCone);
+		[[nodiscard]] NiAVObject*               CalculateLOS(const NiPoint3& a_targetPosition, const NiPoint3& a_rayHitPosition, float a_viewCone);
 		[[nodiscard]] NiPoint3                  CalculateLOSLocation(ACTOR_LOS_LOCATION a_location);
 		[[nodiscard]] bool                      CanAttackActor(Actor* a_actor);
 		[[nodiscard]] bool                      CanFly() const;
@@ -587,7 +587,6 @@ namespace RE
 		[[nodiscard]] TESRace*                  GetRace() const;
 		[[nodiscard]] float                     GetReach() const;
 		[[nodiscard]] float                     GetRegenDelay(ActorValue a_actorValue) const;
-		[[nodiscard]] bool                      GetRider(NiPointer<Actor>& a_outRider);
 		[[nodiscard]] float                     GetSubmergedLevel(float a_zPos, RE::TESObjectCELL* a_cell);
 		[[nodiscard]] TESObjectARMO*            GetSkin() const;
 		[[nodiscard]] TESObjectARMO*            GetSkin(BGSBipedObjectForm::BipedObjectSlot a_slot, bool a_noInit = false);
@@ -640,6 +639,7 @@ namespace RE
 		[[nodiscard]] bool                      IsInRagdollState() const;
 		[[nodiscard]] bool                      IsLeveled() const;
 		[[nodiscard]] bool                      IsLimbGone(std::uint32_t a_limb);
+		[[nodiscard]] bool                      IsMovementAnimationDriven() const;
 		[[nodiscard]] bool                      IsMoving() const;
 		[[nodiscard]] bool                      IsOnMount() const;
 		[[nodiscard]] bool                      IsOnWaterTriangle() const;
@@ -652,7 +652,6 @@ namespace RE
 		[[nodiscard]] bool                      IsRunning() const;
 		[[nodiscard]] bool                      IsSneaking() const;
 		[[nodiscard]] bool                      IsStaggering() const;
-		[[nodiscard]] bool                      IsPointSubmergedMoreThan(const NiPoint3& a_pos, TESObjectCELL* a_cell, float a_waterLevel);
 		[[nodiscard]] bool                      IsSummoned() const noexcept;
 		[[nodiscard]] bool                      IsSummonedByPlayer() const noexcept;
 		[[nodiscard]] bool                      IsTrespassing() const;
@@ -675,6 +674,7 @@ namespace RE
 		void                                    SetPlayerControls(bool a_enable);
 		void                                    SetLooking(float a_angle);  // SetRotationX
 		bool                                    SetSleepOutfit(BGSOutfit* a_outfit, bool a_update3D);
+		bool                                    StartCombat(Actor* a_target, CombatGroup* a_combatGroup = nullptr);
 		void                                    StealAlarm(TESObjectREFR* a_ref, TESForm* a_object, std::int32_t a_num, std::int32_t a_total, TESForm* a_owner, bool a_allowWarning);
 		void                                    StopAlarmOnActor();
 		void                                    StopInteractingQuick(bool a_unk02);
@@ -770,15 +770,16 @@ namespace RE
 		RUNTIME_CAST_ACCESSOR_VERSIONED(IPostAnimationChannelUpdateFunctor, AsIPostAnimationChannelUpdateFunctor, SKSE::RUNTIME_SSE_1_6_629, 0xD8, 0xE0);
 
 		// members
-#ifndef ENABLE_SKYRIM_AE
-		RUNTIME_DATA_CONTENT
+#if defined(EXCLUSIVE_SKYRIM_SE) || defined(EXCLUSIVE_SKYRIM_VR) || defined(EXCLUSIVE_SKYRIM_AE)
+		RUNTIME_DATA_CONTENT  // inlined for single-runtime builds; multi-runtime uses GetActorRuntimeData()
 #endif
 
-	private:
-		void        CalculateCurrentVendorFaction() const;
+			private :
+			void
+					CalculateCurrentVendorFaction() const;
 		float       CalcEquippedWeight();
 		TESFaction* GetCrimeFactionImpl() const;
 	};
-	STATIC_ASSERT_SIZE(Actor, 0x2B0, 0xD8, 0x2B0, 0xC0);
+	STATIC_ASSERT_SIZE(Actor, 0x2B0, 0x2B8, 0x2B0, 0xC0);
 }
 #undef RUNTIME_DATA_CONTENT

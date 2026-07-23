@@ -18,8 +18,9 @@ namespace RE
 
 	bool BSInputDeviceManager::GetButtonNameFromID(INPUT_DEVICE a_device, std::int32_t a_id, BSFixedString& a_buttonName) const
 	{
-		const auto device = devices[a_device];
-		return device && device->GetButtonNameFromID(a_id, a_buttonName);
+		using func_t = decltype(&BSInputDeviceManager::GetButtonNameFromID);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(67316, 68618) };
+		return func(this, a_device, a_id, a_buttonName);
 	}
 
 	BSPCGamepadDeviceDelegate* BSInputDeviceManager::GetGamepad()
@@ -152,8 +153,8 @@ namespace RE
 	void BSInputDeviceManager::PollInputDevices(float a_secsSinceLastFrame)
 	{
 		// Calls Process() on each device
-		// Calls ControlMap::sub_140C11600(InputEvent*)
-		// Calls Rumble::Update_140C10860(float secsSinceLastFrame)
+		// Calls ControlMap::ProcessButtonEvent(ButtonEvent*)
+		// Calls Rumble::Update(float secsSinceLastFrame)
 		// Emits the last InputEvent
 		// resets the global BSInputEventQueue
 		using func_t = decltype(&BSInputDeviceManager::PollInputDevices);

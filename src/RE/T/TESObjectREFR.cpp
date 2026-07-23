@@ -22,6 +22,7 @@
 #include "RE/N/NiControllerManager.h"
 #include "RE/N/NiControllerSequence.h"
 #include "RE/N/NiMath.h"
+#include "RE/N/NiMatrix3.h"
 #include "RE/N/NiTimeController.h"
 #include "RE/T/TESContainer.h"
 #include "RE/T/TESDataHandler.h"
@@ -566,6 +567,13 @@ namespace RE
 		using func_t = decltype(&TESObjectREFR::GetOwner);
 		static REL::Relocation<func_t> func{ RELOCATION_ID(19789, 20194) };
 		return func(this);
+	}
+
+	NiMatrix3* TESObjectREFR::GetRotationMatrix(NiMatrix3* a_out) const
+	{
+		using func_t = decltype(&TESObjectREFR::GetRotationMatrix);
+		static REL::Relocation<func_t> func{ RELOCATION_ID(19325, 19752) };
+		return func(this, a_out);
 	}
 
 	float TESObjectREFR::GetScale() const
@@ -1116,6 +1124,16 @@ namespace RE
 	}
 
 #ifdef SKYRIM_CROSS_VR
+	void TESObjectREFR::RemoveWeapon(BIPED_OBJECT equipIndex)
+	{
+		REL::RelocateVirtual<decltype(&TESObjectREFR::RemoveWeapon)>(0x82, 0x83, this, equipIndex);
+	}
+
+	void TESObjectREFR::Unk_83()
+	{
+		REL::RelocateVirtual<decltype(&TESObjectREFR::Unk_83)>(0x83, 0x84, this);
+	}
+
 	void TESObjectREFR::SetObjectReference(TESBoundObject* a_object)
 	{
 		REL::RelocateVirtual<decltype(&TESObjectREFR::SetObjectReference)>(0x84, 0x85, this, a_object);
