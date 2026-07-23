@@ -457,6 +457,7 @@ namespace RE
 		[[nodiscard]] bool                              IsPointSubmergedMoreThan(const NiPoint3& a_pos, TESObjectCELL* a_cell, float a_waterLevel) const;
 		void                                            MoveRefToNewSpace(TESObjectCELL* a_interior, TESWorldSpace* a_world);
 		void                                            MoveTo(TESObjectREFR* a_target);
+		void                                            MoveTo_Impl(const ObjectRefHandle& a_targetHandle, TESObjectCELL* a_targetCell, TESWorldSpace* a_selfWorldSpace, const NiPoint3& a_position, const NiPoint3& a_rotation);
 		bool                                            MoveToEditorLocation(const NiPoint3& a_position, const NiPoint3& a_rotation);
 		bool                                            MoveToEditorLocation();
 		bool                                            MoveToNearestNavmesh(const float a_minimum_offset = 0.f);
@@ -508,7 +509,6 @@ namespace RE
 	private:
 		InventoryChanges* ForceInitInventoryChanges();
 		InventoryChanges* MakeInventoryChanges();
-		void              MoveTo_Impl(const ObjectRefHandle& a_targetHandle, TESObjectCELL* a_targetCell, TESWorldSpace* a_selfWorldSpace, const NiPoint3& a_position, const NiPoint3& a_rotation);
 		void              PlayAnimation_Impl(NiControllerManager* a_manager, NiControllerSequence* a_toSeq, NiControllerSequence* a_fromSeq, bool a_arg4 = false);
 	};
 	STATIC_ASSERT_SIZE(TESObjectREFR, 0x98, 0x90, 0x98);
