@@ -33,7 +33,7 @@ namespace RE
 
 		virtual ~Precipitation();  // 00
 
-		static NiPoint3 GetDirection()
+		static NiPoint3& GetDirection()
 		{
 			static REL::Relocation<NiPoint3*> precipDirection{ RELOCATION_ID(515509, 401648) };
 			return *precipDirection;
