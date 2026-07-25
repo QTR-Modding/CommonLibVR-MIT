@@ -59,7 +59,7 @@ namespace RE
 #endif
 
 		// add
-		SKYRIM_REL_VR_VIRTUAL void Initialize();           // A2
+		SKYRIM_REL_VR_VIRTUAL void Initialize();           // SE/AE 0xA2, VR 0xA3
 		SKYRIM_REL_VR_VIRTUAL void Update(float a_delta);  // A3
 		SKYRIM_REL_VR_VIRTUAL void FindTargets();          // A4
 
