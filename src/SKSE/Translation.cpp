@@ -10,6 +10,13 @@
 #include "RE/RTTI.h"
 #include "SKSE/Logger.h"
 
+#include <unordered_map>
+
+namespace
+{
+	std::unordered_map<std::string, std::string> fallbackTranslations;
+}
+
 namespace SKSE
 {
 	std::uint32_t ReadLine_w(RE::BSResourceNiBinaryStream* a_this, wchar_t* a_dst, std::uint32_t a_dstLen, std::uint32_t a_terminator)
@@ -46,11 +53,6 @@ namespace SKSE
 		const auto translator = loader ? loader->GetStateAddRef<RE::GFxTranslator>(RE::GFxState::StateType::kTranslator) : nullptr;
 
 		const auto scaleformTranslator = skyrim_cast<RE::BSScaleformTranslator*>(translator);
-
-		if (!scaleformTranslator) {
-			log::warn("Failed to import translation for {}"sv, a_name);
-			return;
-		}
 
 		const auto iniSettingCollection = RE::INISettingCollection::GetSingleton();
 		auto       setting = iniSettingCollection ? iniSettingCollection->GetSetting("sLanguage:General") : nullptr;
@@ -110,26 +112,25 @@ namespace SKSE
 			// replace \t by \0
 			buf[delimIdx] = 0;
 
-			wchar_t* key = nullptr;
-			wchar_t* translation = nullptr;
-			RE::BSScaleformTranslator::GetCachedString(&key, buf, 0);
-			RE::BSScaleformTranslator::GetCachedString(&translation, &buf[delimIdx + 1], 0);
-			scaleformTranslator->translator.translationMap.emplace(key, translation);
+			if (scaleformTranslator) {
+				wchar_t* key = nullptr;
+				wchar_t* translation = nullptr;
+				RE::BSScaleformTranslator::GetCachedString(&key, buf, 0);
+				RE::BSScaleformTranslator::GetCachedString(&translation, &buf[delimIdx + 1], 0);
+				scaleformTranslator->translator.translationMap.emplace(key, translation);
+			} else {
+				auto key = stl::utf16_to_utf8(buf);
+				auto translation = stl::utf16_to_utf8(&buf[delimIdx + 1]);
+				if (key && translation) {
+					fallbackTranslations.emplace(std::move(*key), std::move(*translation));
+				}
+			}
 		}
 	}
 
 	bool Translation::Translate(const std::string& a_key, std::string& a_result)
 	{
 		if (!a_key.starts_with('$')) {
-			return false;
-		}
-
-		const auto scaleformManager = RE::BSScaleformManager::GetSingleton();
-		const auto loader = scaleformManager ? scaleformManager->loader : nullptr;
-		const auto translator = loader ? loader->GetStateAddRef<RE::GFxTranslator>(RE::GFxState::StateType::kTranslator) : nullptr;
-
-		if (!translator) {
-			log::warn("Failed to get Scaleform translator"sv);
 			return false;
 		}
 
@@ -163,19 +164,36 @@ namespace SKSE
 		}
 
 		// Lookup translation
-		std::wstring         key_utf16 = stl::utf8_to_utf16(key).value_or(L""s);
-		RE::GFxWStringBuffer result;
+		std::string result_utf8;
+		const auto  scaleformManager = RE::BSScaleformManager::GetSingleton();
+		const auto  loader = scaleformManager ? scaleformManager->loader : nullptr;
+		const auto  translator = loader ? loader->GetStateAddRef<RE::GFxTranslator>(RE::GFxState::StateType::kTranslator) : nullptr;
 
-		RE::GFxTranslator::TranslateInfo translateInfo;
-		translateInfo.key = key_utf16.c_str();
-		translateInfo.result = std::addressof(result);
+		if (translator) {
+			std::wstring         key_utf16 = stl::utf8_to_utf16(key).value_or(L""s);
+			RE::GFxWStringBuffer result;
 
-		translator->Translate(std::addressof(translateInfo));
-		if (result.empty()) {
-			return false;
+			RE::GFxTranslator::TranslateInfo translateInfo;
+			translateInfo.key = key_utf16.c_str();
+			translateInfo.result = std::addressof(result);
+
+			translator->Translate(std::addressof(translateInfo));
+			result_utf8 = stl::utf16_to_utf8(result.c_str()).value_or(""s);
+			if (result_utf8 == key && !skyrim_cast<RE::BSScaleformTranslator*>(translator)) {
+				result_utf8.clear();
+			}
 		}
 
-		std::string result_utf8 = stl::utf16_to_utf8(result.c_str()).value_or(""s);
+		if (result_utf8.empty()) {
+			const auto translation = fallbackTranslations.find(key);
+			if (translation == fallbackTranslations.end() || translation->second.empty()) {
+				if (!translator) {
+					log::warn("Failed to get Scaleform translator"sv);
+				}
+				return false;
+			}
+			result_utf8 = translation->second;
+		}
 
 		// Replace tokens with nested translations from right to left
 		auto pos = result_utf8.rfind("{}"s);
