@@ -13,7 +13,10 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../.." commonlib)
 add_commonlibsse_plugin(prebuilt_consumer_cmake
 	AUTHOR "CommonLibVR"
 	NAME "prebuilt_consumer_cmake"
-	VERSION 1.0.0)
+	VERSION 1.0.0
+	COMPATIBLE_RUNTIMES
+		1.5.97.0
+		1.6.1170.0)
 
 # CommonLibSSE-NG headers are PCH-dependent; consumers force-include a PCH.
 target_precompile_headers(prebuilt_consumer_cmake PRIVATE
