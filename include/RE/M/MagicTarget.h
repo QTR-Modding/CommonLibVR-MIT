@@ -58,7 +58,7 @@ namespace RE
 		public:
 			inline static constexpr auto RTTI = RTTI_MagicTarget__IPostCreationModification;
 
-			virtual ~IPostCreationModification();  // 00
+			virtual ~IPostCreationModification() = default;  // 00
 
 			// add
 			virtual void ModifyActiveEffect(ActiveEffect* a_effect) = 0;  // 01
