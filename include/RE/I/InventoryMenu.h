@@ -3,6 +3,7 @@
 #include "RE/B/BSTArray.h"
 #include "RE/G/GFxValue.h"
 #include "RE/I/IMenu.h"
+#include "RE/M/MenuEventHandler.h"
 #include "REL/RuntimeDataAccessors.h"
 
 namespace RE
@@ -16,7 +17,13 @@ namespace RE
 	// menuDepth = 0
 	// flags = kPausesGame | kDisablePauseMenu | kUpdateUsesCursor | kInventoryItemMenu | kCustomRendering
 	// context = kNone
-	class InventoryMenu : public IMenu
+	class InventoryMenu :
+#if defined(EXCLUSIVE_SKYRIM_VR)
+		public IMenu,             // 00
+		public MenuEventHandler  // 40
+#else
+		public IMenu
+#endif
 	{
 	public:
 		inline static constexpr auto      RTTI = RTTI_InventoryMenu;
@@ -51,12 +58,20 @@ namespace RE
 		UI_MESSAGE_RESULTS ProcessMessage(UIMessage& a_message) override;    // 04
 		void               PostDisplay() override;                           // 06
 
-		RUNTIME_DATA_ACCESSOR(RUNTIME_DATA, 0x30, 0x40);
+#if defined(EXCLUSIVE_SKYRIM_VR)
+		// override (MenuEventHandler)
+		bool CanProcess(InputEvent* a_event) override;  // 01
+#endif
+
+		RUNTIME_DATA_ACCESSOR(RUNTIME_DATA, 0x30, 0x58);
 		// members
+#if defined(EXCLUSIVE_SKYRIM_VR)
+		std::uint64_t unk50;  // 50
+#endif
 #ifndef SKYRIM_CROSS_VR
-		RUNTIME_DATA_CONTENT;  // 30, 40
+		RUNTIME_DATA_CONTENT;  // 30, 58
 #endif
 	};
-	STATIC_ASSERT_SIZE(InventoryMenu, 0x88, 0x88, 0x98, 0x30);
+	STATIC_ASSERT_SIZE(InventoryMenu, 0x88, 0x88, 0xB0, 0x30);
 }
 #undef RUNTIME_DATA_CONTENT
