@@ -3,6 +3,7 @@
 #include "RE/B/BSTArray.h"
 #include "RE/G/GFxValue.h"
 #include "RE/I/IMenu.h"
+#include "RE/M/MenuEventHandler.h"
 #include "REL/RuntimeDataAccessors.h"
 
 namespace RE
@@ -16,7 +17,13 @@ namespace RE
 	// menuDepth = 0
 	// flags = kPausesGame | kUsesMenuContext | kDisablePauseMenu | kUpdateUsesCursor | kInventoryItemMenu | kCustomRendering
 	// context = kItemMenu
-	class ContainerMenu : public IMenu
+	class ContainerMenu :
+#if defined(EXCLUSIVE_SKYRIM_VR)
+		public IMenu,             // 00
+		public MenuEventHandler  // 40
+#else
+		public IMenu
+#endif
 	{
 	public:
 		inline static constexpr auto      RTTI = RTTI_ContainerMenu;
@@ -72,12 +79,17 @@ namespace RE
 		[[nodiscard]] GFxValue  GetRoot() const noexcept;
 		[[nodiscard]] ItemList* GetItemList() const noexcept;
 
-		RUNTIME_DATA_ACCESSOR(RUNTIME_DATA, 0x30, 0x40);
+#if defined(EXCLUSIVE_SKYRIM_VR)
+		// override (MenuEventHandler)
+		bool CanProcess(InputEvent* a_event) override;  // 01
+#endif
+
+		RUNTIME_DATA_ACCESSOR(RUNTIME_DATA, 0x30, 0x50);
 		// members
 #ifndef SKYRIM_CROSS_VR
-		RUNTIME_DATA_CONTENT;  // 30, 40
+		RUNTIME_DATA_CONTENT;  // 30, 50
 #endif
 	};
-	STATIC_ASSERT_SIZE(ContainerMenu, 0xC0, 0xC0, 0xD0, 0x30);
+	STATIC_ASSERT_SIZE(ContainerMenu, 0xC0, 0xC0, 0xE0, 0x30);
 }
 #undef RUNTIME_DATA_CONTENT
