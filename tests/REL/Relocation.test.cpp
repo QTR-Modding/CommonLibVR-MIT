@@ -1,10 +1,34 @@
 #define CATCH2_CONFIG_MAIN
 #include "catch2/catch_all.hpp"
 
+#include "RE/Skyrim.h"
 #include "REL/REL.h"
 #include "SKSE/SKSE.h"
 
 using namespace REL::literals;
+
+TEST_CASE("SkyrimVM/VMOffset")
+{
+	const SKSE::stl::scope_exit cleanup{ []() noexcept { REL::Module::reset(); } };
+	REL::Version version;
+	std::ptrdiff_t offset = 0x200;
+#ifdef ENABLE_SKYRIM_SE
+	SECTION("SE") { version = SKSE::RUNTIME_SSE_1_5_97; }
+#endif
+#ifdef ENABLE_SKYRIM_VR
+	SECTION("VR") { version = SKSE::RUNTIME_VR_1_4_15; }
+#endif
+#ifdef ENABLE_SKYRIM_AE
+	SECTION("AE 1.6") { version = SKSE::RUNTIME_SSE_1_6_1170; }
+	SECTION("AE 1.7.99") { version = SKSE::RUNTIME_SSE_1_7_99; offset = 0x210; }
+	SECTION("AE 1.7.104") { version = REL::Version{ 1, 7, 104, 0 }; offset = 0x210; }
+#endif
+	REQUIRE(REL::Module::mock(version));
+	alignas(RE::SkyrimVM) std::byte storage[sizeof(RE::SkyrimVM)]{};
+	auto* vm = reinterpret_cast<RE::SkyrimVM*>(storage);
+	CHECK(static_cast<const void*>(&vm->GetVM()) == storage + offset);
+	CHECK(static_cast<const void*>(&std::as_const(*vm).GetVM()) == storage + offset);
+}
 
 TEST_CASE("Version/DefaultConstructor")
 {
