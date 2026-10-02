@@ -390,6 +390,107 @@ TEST_CASE("IDDatabase/FailedIDLookup")
 	REQUIRE_THROWS(REL::IDDatabase::get().id2offset(0xFFFFFFFF));
 }
 
+#ifdef ENABLE_SKYRIM_AE
+TEST_CASE("IDDatabase/Format5")
+{
+	constexpr REL::Version version{ 1, 7, 99, 0 };
+	struct Header
+	{
+		std::int32_t                format = 5;
+		std::array<std::int32_t, 4> version{ 1, 7, 99, 0 };
+		char                        moduleName[64] = "SkyrimSE.exe";
+		std::int32_t                pointerSize = 8;
+		std::int32_t                dataFormat = 0;
+		std::int32_t                count = 6;
+	} header;
+	static_assert(sizeof(Header) == 96);
+	std::array<std::uint32_t, 6> offsets{ 0, 0x1022, 0, 0x155260, 0xF1234567, 0 };
+
+	const auto                  path = std::filesystem::temp_directory_path() /
+	                                   std::format("CommonLibVR-MIT-format5-{}.bin", std::random_device{}());
+	const SKSE::stl::scope_exit cleanup{ [&]() noexcept {
+		REL::Module::reset();
+		std::error_code error;
+		std::filesystem::remove(path, error);
+	} };
+	REQUIRE(REL::Module::mock(version));
+	CHECK(REL::Module::IsAE());
+
+	bool valid = true;
+	SECTION("Sparse offsets and unsigned offsets") {}
+	SECTION("Wrong runtime version")
+	{
+		++header.version[2];
+		valid = false;
+	}
+	SECTION("Wrong pointer size")
+	{
+		header.pointerSize = 4;
+		valid = false;
+	}
+	SECTION("Unsupported data encoding")
+	{
+		header.dataFormat = 1;
+		valid = false;
+	}
+	SECTION("Negative count")
+	{
+		header.count = -1;
+		valid = false;
+	}
+	SECTION("Empty count")
+	{
+		header.count = 0;
+		valid = false;
+	}
+	SECTION("Truncated table")
+	{
+		++header.count;
+		valid = false;
+	}
+	SECTION("Trailing table data")
+	{
+		--header.count;
+		valid = false;
+	}
+	SECTION("No addresses")
+	{
+		offsets.fill(0);
+		valid = false;
+	}
+
+	{
+		std::ofstream file(path, std::ios::binary);
+		file.write(reinterpret_cast<const char*>(&header), sizeof(header));
+		file.write(reinterpret_cast<const char*>(offsets.data()), sizeof(offsets));
+		REQUIRE(file.good());
+	}
+	REQUIRE(REL::IDDatabase::inject(path.wstring(), REL::IDDatabase::Format::SSEv5, version) == valid);
+	if (!valid) {
+		return;
+	}
+	CHECK(REL::IDDatabase::get().id2offset(1) == offsets[1]);
+	CHECK(REL::IDDatabase::get().id2offset(3) == offsets[3]);
+	CHECK(REL::IDDatabase::get().id2offset(4) == offsets[4]);
+	for (const auto missing : { 0u, 2u, 5u, 6u }) {
+		CHECK_THROWS(REL::IDDatabase::get().id2offset(missing));
+	}
+	REL::IDDatabase::Offset2ID reverse;
+	CHECK(reverse.size() == 3);
+	CHECK(reverse(offsets[3]) == 3);
+	// Production AE loading requests format 2 and accepts a format-5 header.
+	REQUIRE(REL::IDDatabase::inject(path.wstring(), REL::IDDatabase::Format::SSEv2, version));
+	CHECK(REL::IDDatabase::get().id2offset(3) == offsets[3]);
+
+	// Keep the shared mapping alive, then exercise opening it from a fresh database.
+	REL::detail::memory_map mapping;
+	constexpr auto          mappingBytes = 3 * 2 * sizeof(std::uint64_t);
+	REQUIRE(mapping.open(L"CommonLibVR-MIT-Offsets-v5-1-7-99-0", mappingBytes));
+	REQUIRE(REL::IDDatabase::inject(path.wstring(), REL::IDDatabase::Format::SSEv5, version));
+	CHECK(REL::IDDatabase::get().id2offset(3) == offsets[3]);
+}
+#endif
+
 TEST_CASE("CodeVerification/VerifyCode", "[unit]")
 {
 	SECTION("Basic byte verification")

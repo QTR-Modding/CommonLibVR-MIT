@@ -51,3 +51,28 @@ TEST_CASE("PluginDeclaration/GetSingleton")
 {
 	CHECK(PluginDeclaration::GetSingleton() == &SKSEPlugin_Version);
 }
+
+TEST_CASE("PluginDeclaration/AddressLibraryFormat5")
+{
+	for (const auto structs : { StructCompatibility::Dependent, StructCompatibility::Independent }) {
+		for (const auto runtime : { VersionIndependence::AddressLibrary, VersionIndependence::SignatureScanning }) {
+			const PluginDeclaration declaration({ .Version = "1.2.3.4"_v,
+				.Name = "Format5",
+				.StructCompatibility = structs,
+				.RuntimeCompatibility = runtime });
+			// Inspect the exported bytes without aliasing two different C++ types.
+			std::uint32_t flags;
+			std::memcpy(&flags, reinterpret_cast<const char*>(&declaration) + offsetof(PluginVersionData, versionIndependenceEx), sizeof(flags));
+			const auto expected = static_cast<std::uint32_t>(structs) |
+			                      (runtime == VersionIndependence::AddressLibrary ? PluginVersionData::kVersionIndependentEx_AddressLibraryV5 : 0);
+			CHECK(flags == expected);
+			CHECK(declaration.GetStructCompatibility() == structs);
+		}
+	}
+	PluginVersionData legacy;
+	legacy.UsesNoStructs();
+	legacy.UsesAddressLibrary();
+	CHECK(legacy.versionIndependence == PluginVersionData::kVersionIndependent_AddressLibraryPostAE);
+	CHECK(legacy.versionIndependenceEx ==
+		  (PluginVersionData::kVersionIndependentEx_NoStructUse | PluginVersionData::kVersionIndependentEx_AddressLibraryV5));
+}

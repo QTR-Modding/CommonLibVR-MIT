@@ -54,6 +54,8 @@ namespace REL
 	class IDDatabase
 	{
 	private:
+		static constexpr std::uint8_t kFormatV5 = 5;
+
 		struct mapping_t
 		{
 			std::uint64_t id;
@@ -65,7 +67,8 @@ namespace REL
 		{
 			SSEv1,
 			SSEv2,
-			VR
+			VR,
+			SSEv5
 		};
 
 		class Offset2ID
@@ -153,6 +156,8 @@ namespace REL
 				return _instance.load_file(a_filePath.data(), a_version, 1, false);
 			case Format::SSEv2:
 				return _instance.load_file(a_filePath.data(), a_version, 2, false);
+			case Format::SSEv5:
+				return _instance.load_file(a_filePath.data(), a_version, kFormatV5, false);
 #	ifdef ENABLE_SKYRIM_VR
 			case Format::VR:
 				return _instance.load_csv(a_filePath.data(), a_version, false);
@@ -180,15 +185,7 @@ namespace REL
 					return a_lhs.id < a_rhs.id;
 				});
 
-			bool failed = false;
-			if (it == _id2offset.end()) {
-				failed = true;
-			} else if SKYRIM_REL_VR_CONSTEXPR (Module::IsVR()) {
-				if (it->id != a_id) {
-					failed = true;
-				}
-			}
-			if (failed) {
+			if (it == _id2offset.end() || it->id != a_id) {
 				stl::report_and_fail(
 					std::format(
 						"Failed to find the id within the address library: {}\n"
@@ -234,6 +231,21 @@ namespace REL
 				_stream.read(reinterpret_cast<char*>(std::addressof(a_val)), sizeof(T));
 			}
 
+			template <class T>
+			inline void readin(std::span<T> a_vals)
+			{
+				_stream.read(reinterpret_cast<char*>(a_vals.data()), static_cast<std::streamsize>(a_vals.size_bytes()));
+			}
+
+			[[nodiscard]] std::streamoff remaining()
+			{
+				const auto position = _stream.tellg();
+				_stream.seekg(0, std::ios::end);
+				const auto size = _stream.tellg() - position;
+				_stream.seekg(position);
+				return size;
+			}
+
 			template <
 				class T,
 				std::enable_if_t<
@@ -255,26 +267,33 @@ namespace REL
 		public:
 			void read(istream_t& a_in, std::uint8_t a_formatVersion)
 			{
-				std::int32_t format{};
-				a_in.readin(format);
-				if (format != a_formatVersion) {
+				a_in.readin(_format);
+				// AE databases may use either the original encoding or format 5.
+				if (_format != a_formatVersion && !(a_formatVersion == 2 && is_dense())) {
 					stl::report_and_fail(
 						std::format(
 							"Unsupported address library format: {}\n"
 							"This means this script extender plugin is incompatible with the address "
 							"library available for this version of the game, and thus does not "
 							"support it."sv,
-							format));
+							_format));
 				}
 
 				std::int32_t version[4]{};
-				std::int32_t nameLen{};
 				a_in.readin(version);
-				a_in.readin(nameLen);
-				a_in.ignore(nameLen);
-
-				a_in.readin(_pointerSize);
-				a_in.readin(_addressCount);
+				if (is_dense()) {
+					constexpr std::streamsize moduleNameSize = 64;
+					a_in.ignore(moduleNameSize);
+					a_in.readin(_pointerSize);
+					a_in.readin(_dataFormat);
+					a_in.readin(_addressCount);
+				} else {
+					std::int32_t nameLen{};
+					a_in.readin(nameLen);
+					a_in.ignore(nameLen);
+					a_in.readin(_pointerSize);
+					a_in.readin(_addressCount);
+				}
 
 				for (std::size_t i = 0; i < std::extent_v<decltype(version)>; ++i) {
 					_version[i] = static_cast<std::uint16_t>(version[i]);
@@ -287,8 +306,18 @@ namespace REL
 
 			[[nodiscard]] Version version() const noexcept { return _version; }
 
+			[[nodiscard]] bool is_dense() const noexcept { return _format == kFormatV5; }
+
+			[[nodiscard]] bool valid_dense() const noexcept
+			{
+				constexpr std::int32_t offset32 = 0;
+				return _pointerSize == sizeof(std::uintptr_t) && _dataFormat == offset32 && _addressCount > 0;
+			}
+
 		private:
 			Version      _version;
+			std::int32_t _format{ 0 };
+			std::int32_t _dataFormat{ 0 };
 			std::int32_t _pointerSize{ 0 };
 			std::int32_t _addressCount{ 0 };
 		};
@@ -327,6 +356,8 @@ namespace REL
 		}
 
 		bool load_file(stl::zwstring a_filename, Version a_version, std::uint8_t a_formatVersion, bool a_failOnError);
+
+		bool load_dense(istream_t& a_in, const header_t& a_header, Version a_version, bool a_failOnError);
 
 #ifdef ENABLE_SKYRIM_VR
 		bool load_csv(stl::zwstring a_filename, Version a_version, bool a_failOnError);
