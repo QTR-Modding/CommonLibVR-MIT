@@ -100,7 +100,12 @@ namespace REL
 			header_t  header;
 			header.read(in, a_formatVersion);
 			if (header.version() != a_version) {
-				return stl::report_and_error("version mismatch"sv, a_failOnError);
+				stl::report_and_error("version mismatch"sv, a_failOnError);
+				return false;
+			}
+
+			if (header.is_dense()) {
+				return load_dense(in, header, a_version, a_failOnError);
 			}
 
 			auto mapname = L"CommonLibSSEOffsets-v2-"s;
@@ -118,7 +123,7 @@ namespace REL
 				return stl::report_and_error("failed to create shared mapping"sv, a_failOnError);
 			}
 		} catch (const std::system_error&) {
-			return stl::report_and_error(
+			stl::report_and_error(
 				std::format(
 					"Failed to locate an appropriate address library with the path: {}\n"
 					"This means you are missing the address library for this specific version of "
@@ -130,6 +135,46 @@ namespace REL
 			return false;
 		}
 
+		return true;
+	}
+
+	bool IDDatabase::load_dense(istream_t& a_in, const header_t& a_header, Version a_version, bool a_failOnError)
+	{
+		if (!a_header.valid_dense() ||
+			a_in.remaining() != static_cast<std::streamoff>(a_header.address_count() * sizeof(std::uint32_t))) {
+			stl::report_and_error("invalid format 5 address library"sv, a_failOnError);
+			return false;
+		}
+
+		// Format 5 stores a 32-bit offset at each ID; zero denotes a missing ID.
+		// Keep the existing sorted-pair representation for forward and reverse lookups.
+		std::vector<std::uint32_t> offsets(a_header.address_count());
+		a_in.readin(std::span{ offsets });
+		const auto count = static_cast<std::size_t>(std::count_if(offsets.begin(), offsets.end(), [](auto a_offset) {
+			return a_offset != 0;
+		}));
+		if (count == 0) {
+			stl::report_and_error("address library has no entries"sv, a_failOnError);
+			return false;
+		}
+
+		// Other readers may use a different in-memory representation for format 5.
+		const auto mapname = L"CommonLibVR-MIT-Offsets-v5-"s + a_version.wstring();
+		const auto byteSize = count * sizeof(mapping_t);
+		if (_mmap.open(mapname, byteSize)) {
+			_id2offset = { static_cast<mapping_t*>(_mmap.data()), count };
+		} else if (_mmap.create(mapname, byteSize)) {
+			_id2offset = { static_cast<mapping_t*>(_mmap.data()), count };
+			std::size_t next = 0;
+			for (std::size_t id = 0; id < offsets.size(); ++id) {
+				if (offsets[id] != 0) {
+					_id2offset[next++] = { id, offsets[id] };
+				}
+			}
+		} else {
+			stl::report_and_error("failed to create shared mapping"sv, a_failOnError);
+			return false;
+		}
 		return true;
 	}
 

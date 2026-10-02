@@ -375,6 +375,7 @@ namespace SKSE
 		enum
 		{
 			kVersionIndependentEx_NoStructUse = 1 << 0,
+			kVersionIndependentEx_AddressLibraryV5 = 1 << 1,
 		};
 
 		constexpr void PluginVersion(REL::Version a_version) noexcept { pluginVersion = a_version.pack(); }
@@ -393,7 +394,11 @@ namespace SKSE
 
 		[[nodiscard]] constexpr std::string_view GetAuthorEmail() const noexcept { return std::string_view{ supportEmail }; }
 
-		constexpr void UsesAddressLibrary() noexcept { versionIndependence |= kVersionIndependent_AddressLibraryPostAE; }
+		constexpr void UsesAddressLibrary() noexcept
+		{
+			versionIndependence |= kVersionIndependent_AddressLibraryPostAE;
+			versionIndependenceEx |= kVersionIndependentEx_AddressLibraryV5;
+		}
 		constexpr void UsesSigScanning() noexcept { versionIndependence |= kVersionIndependent_Signatures; }
 		constexpr void UsesUpdatedStructs() noexcept { versionIndependence |= kVersionIndependent_StructsPost629; }
 
@@ -643,7 +648,17 @@ namespace SKSE
 		static_assert(offsetof(PluginDeclarationInfo, MinimumSKSEVersion) == 0x348);
 
 		constexpr PluginDeclaration(PluginDeclarationInfo info) noexcept :
-			_data(std::move(info)) {}
+			_data{
+				info.Version,
+				info.Name,
+				info.Author,
+				info.SupportEmail,
+				static_cast<StructCompatibility>(
+					static_cast<std::uint32_t>(info.StructCompatibility) |
+					(info.RuntimeCompatibility.UsesAddressLibrary() ? PluginVersionData::kVersionIndependentEx_AddressLibraryV5 : 0)),
+				info.RuntimeCompatibility,
+				info.MinimumSKSEVersion
+			} {}
 
 		[[nodiscard]] constexpr REL::Version GetVersion() const noexcept
 		{
@@ -667,7 +682,9 @@ namespace SKSE
 
 		[[nodiscard]] constexpr StructCompatibility GetStructCompatibility() const noexcept
 		{
-			return _data.StructCompatibility;
+			// This field also carries SKSE's Address Library format capability bit.
+			return static_cast<StructCompatibility>(
+				static_cast<std::uint32_t>(_data.StructCompatibility) & ~PluginVersionData::kVersionIndependentEx_AddressLibraryV5);
 		}
 
 		[[nodiscard]] constexpr const RuntimeCompatibility& GetRuntimeCompatibility() const noexcept
