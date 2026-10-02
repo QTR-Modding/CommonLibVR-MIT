@@ -286,6 +286,9 @@ namespace RE
 		RUNTIME_DATA_ACCESSOR_EX(RUNTIME_DATA2, GetRuntimeData2, 0x760, 0x780);
 		static SkyrimVM* GetSingleton();
 
+		// Two event sinks added in 1.7.99 shift the VM pointer by 0x10.
+		RUNTIME_DATA_ACCESSOR_VERSIONED_EX(BSTSmartPointer<BSScript::IVirtualMachine>, GetVM, SKSE::RUNTIME_SSE_1_7_99, 0x200, 0x210);
+
 		bool QueuePostRenderCall(const BSTSmartPointer<SkyrimScript::DelayFunctor>& a_functor);
 		void RelayEvent(VMHandle handle, BSFixedString* event, BSScript::IFunctionArguments* args, ISendEventFilter* optionalFilter);
 		void SendAndRelayEvent(VMHandle handle, BSFixedString* event, BSScript::IFunctionArguments* args, ISendEventFilter* optionalFilter);
@@ -295,7 +298,7 @@ namespace RE
 		void Freeze();
 
 		// members
-		BSTSmartPointer<BSScript::IVirtualMachine> impl;                       // 0200
+		BSTSmartPointer<BSScript::IVirtualMachine> impl;                       // 0200 before 1.7.99; use GetVM()
 		BSScript::IVMSaveLoadInterface*            saveLoadInterface;          // 0208
 		BSScript::IVMDebugInterface*               debugInterface;             // 0210
 		BSScript::SimpleAllocMemoryPagePolicy      memoryPagePolicy;           // 0218
