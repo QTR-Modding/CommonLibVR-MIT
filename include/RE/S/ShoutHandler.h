@@ -14,7 +14,9 @@ namespace RE
 
 		// override (PlayerInputHandler)
 		bool CanProcess(InputEvent* a_event) override;                                  // 01
+#ifdef EXCLUSIVE_SKYRIM_VR
 		void ProcessButton(ButtonEvent* a_event, PlayerControlsData* a_data) override;  // 04
+#endif
 
 		// members
 		std::uint64_t unk10;  // 10
