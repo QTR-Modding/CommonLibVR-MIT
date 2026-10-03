@@ -3,6 +3,14 @@
 #include "REL/Relocation.h"
 #include "SKSE/Version.h"
 
+namespace REL
+{
+	[[nodiscard]] SKYRIM_REL std::size_t VersionShift(std::size_t a_offset, std::size_t a_delta, Version a_threshold) noexcept
+	{
+		return Module::IsAtLeast(a_threshold) ? a_offset + a_delta : a_offset;
+	}
+}
+
 // Helper macros for generating runtime data accessor functions.
 // These reduce boilerplate for common patterns across ~160+ accessor function pairs.
 // See docs/RuntimeDataAccessors.md for usage documentation.

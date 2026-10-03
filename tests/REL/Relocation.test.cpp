@@ -7,6 +7,43 @@
 
 using namespace REL::literals;
 
+TEST_CASE("PlayerInputHandler/VersionedButtonDispatch")
+{
+	const SKSE::stl::scope_exit cleanup{ []() noexcept { REL::Module::reset(); } };
+	REL::Version version;
+	std::size_t buttonSlot = 4;
+	std::size_t heldSlot = 6;
+#ifdef ENABLE_SKYRIM_SE
+	SECTION("SE") { version = SKSE::RUNTIME_SSE_1_5_97; }
+#endif
+#ifdef ENABLE_SKYRIM_VR
+	SECTION("VR") { version = SKSE::RUNTIME_VR_1_4_15; heldSlot = 8; }
+#endif
+#ifdef ENABLE_SKYRIM_AE
+	SECTION("AE 1.6") { version = SKSE::RUNTIME_SSE_1_6_1170; }
+	SECTION("AE 1.7.99") { version = SKSE::RUNTIME_SSE_1_7_99; buttonSlot = 6; heldSlot = 8; }
+	SECTION("AE 1.7.104") { version = REL::Version{ 1, 7, 104, 0 }; buttonSlot = 6; heldSlot = 8; }
+#endif
+	REQUIRE(REL::Module::mock(version));
+	const auto wrongButton = +[](RE::PlayerInputHandler*, RE::ButtonEvent*, RE::PlayerControlsData* data) { data->running = false; };
+	const auto correctButton = +[](RE::PlayerInputHandler*, RE::ButtonEvent*, RE::PlayerControlsData* data) { data->running = true; };
+	std::array<std::uintptr_t, 9> vtable{};
+	vtable.fill(reinterpret_cast<std::uintptr_t>(wrongButton));
+	vtable[buttonSlot] = reinterpret_cast<std::uintptr_t>(correctButton);
+	alignas(RE::HeldStateHandler) std::byte storage[sizeof(RE::HeldStateHandler)]{};
+	*reinterpret_cast<std::uintptr_t**>(storage) = vtable.data();
+	auto* handler = reinterpret_cast<RE::HeldStateHandler*>(storage);
+	RE::PlayerControlsData data{};
+	handler->ProcessButton(nullptr, &data);
+	CHECK(data.running);
+	const auto wrongHeld = +[](RE::HeldStateHandler* self, bool) { self->heldStateActive = false; };
+	const auto correctHeld = +[](RE::HeldStateHandler* self, bool active) { self->heldStateActive = active; };
+	vtable.fill(reinterpret_cast<std::uintptr_t>(wrongHeld));
+	vtable[heldSlot] = reinterpret_cast<std::uintptr_t>(correctHeld);
+	handler->SetHeldStateActive(true);
+	CHECK(handler->heldStateActive);
+}
+
 TEST_CASE("SkyrimVM/VMOffset")
 {
 	const SKSE::stl::scope_exit cleanup{ []() noexcept { REL::Module::reset(); } };

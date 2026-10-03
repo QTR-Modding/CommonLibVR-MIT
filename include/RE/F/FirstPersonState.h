@@ -39,7 +39,9 @@ namespace RE
 
 		// override (PlayerInputHandler)
 		bool CanProcess(InputEvent* a_event) override;                                          // 01
+#ifdef EXCLUSIVE_SKYRIM_VR
 		void ProcessButton(ButtonEvent* a_event, PlayerControlsData* a_movementData) override;  // 04
+#endif
 
 		// members
 		NiPoint3      lastPosition;             // 30

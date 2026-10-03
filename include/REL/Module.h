@@ -242,6 +242,11 @@ namespace REL
 			return GetRuntime() == Runtime::AE;
 		}
 
+		[[nodiscard]] static SKYRIM_REL bool IsAtLeast(Version a_version) noexcept
+		{
+			return IsAE() && get().version() >= a_version;
+		}
+
 		/**
 		 * Returns whether the current Skyrim runtime is a pre-Anniversary Edition Skyrim SE release.
 		 */
