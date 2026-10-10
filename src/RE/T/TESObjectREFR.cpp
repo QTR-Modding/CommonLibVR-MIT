@@ -80,11 +80,11 @@ namespace RE
 		return func(this);
 	}
 
-	ModelReferenceEffect* TESObjectREFR::ApplyArtObject(BGSArtObject* a_artObject, float a_duration, TESObjectREFR* a_facingRef, bool a_faceTarget, bool a_attachToCamera, NiAVObject* a_attachNode, bool a_interfaceEffect)
+	void TESObjectREFR::ApplyArtObject(BGSArtObject* a_artObject, float a_duration, TESObjectREFR* a_facingRef, bool a_faceTarget, bool a_attachToCamera, NiAVObject* a_attachNode, bool a_interfaceEffect)
 	{
 		using func_t = decltype(&TESObjectREFR::ApplyArtObject);
 		static REL::Relocation<func_t> func{ RELOCATION_ID(22289, 22769) };
-		return func(this, a_artObject, a_duration, a_facingRef, a_faceTarget, a_attachToCamera, a_attachNode, a_interfaceEffect);
+		func(this, a_artObject, a_duration, a_facingRef, a_faceTarget, a_attachToCamera, a_attachNode, a_interfaceEffect);
 	}
 
 	ShaderReferenceEffect* TESObjectREFR::ApplyEffectShader(TESEffectShader* a_effectShader, float a_duration, TESObjectREFR* a_facingRef, bool a_faceTarget, bool a_attachToCamera, NiAVObject* a_attachNode, bool a_interfaceEffect)
