@@ -196,6 +196,7 @@ namespace RE
 		bool        IsParentForm() override;                                                                            // 34 - { return true; }
 		bool        IsFormTypeChild(FormType a_type) override;                                                          // 36
 
+		void                                AddAnimatedReference(const ObjectRefHandle& a_reference);
 		TESNPC*                             GetActorOwner();
 		bhkWorld*                           GetbhkWorld() const;
 		void                                ForEachReference(std::function<BSContainer::ForEachResult(TESObjectREFR*)> a_callback) const;

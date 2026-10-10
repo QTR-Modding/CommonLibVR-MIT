@@ -10,6 +10,13 @@
 
 namespace RE
 {
+	void TESObjectCELL::AddAnimatedReference(const ObjectRefHandle& a_reference)
+	{
+		using func_t = decltype(&TESObjectCELL::AddAnimatedReference);
+		static REL::Relocation<func_t> func{ REL::VariantID(19008, 19419, 0x290A80) };
+		return func(this, a_reference);
+	}
+
 	void TESObjectCELL::ForEachReference(std::function<BSContainer::ForEachResult(TESObjectREFR*)> a_callback) const
 	{
 		auto&           runtimeData = GetRuntimeData();
