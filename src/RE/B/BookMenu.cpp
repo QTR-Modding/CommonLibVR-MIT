@@ -55,6 +55,11 @@ namespace RE
 		return *displayScale;
 	}
 
+	void BookMenu::OpenBookMenu(const BSString& a_description, const ExtraDataList* a_extraList, TESObjectREFR* a_ref, TESObjectBOOK* a_book, const NiPoint3& a_pos, const NiMatrix3& a_rot, float a_scale, bool a_useDefaultPos)
+	{
+		return OpenMenu_Impl(a_description, a_extraList, a_ref, a_book, a_pos, a_rot, a_scale, a_useDefaultPos);
+	}
+
 	void BookMenu::OpenMenuFromReference(TESObjectREFR* a_reference)
 	{
 		if (!a_reference || !a_reference->GetObjectReference()) {
