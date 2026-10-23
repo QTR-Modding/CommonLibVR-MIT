@@ -124,7 +124,7 @@ namespace RE
 		if SKYRIM_REL_CONSTEXPR (Module::IsVR()) {
 			return GetVRPlayerRuntimeData().grabbedObjectData[a_device].grabbedObject.get();
 		} else {
-			return REL::RelocateMemberIfNewer<ObjectRefHandle>(SKSE::RUNTIME_SSE_1_6_629, this, 0x8C8, 0x8D0).get();
+			return REL::RelocateMemberIfNewer<ObjectRefHandle>(SKSE::RUNTIME_SSE_1_6_629, this, 0x8C8, REL::VersionShift(0x8D0, kAE1799AddedEventSinkSize, SKSE::RUNTIME_SSE_1_7_99)).get();
 		}
 	}
 
@@ -206,7 +206,7 @@ namespace RE
 			}
 			return false;
 		} else {
-			return static_cast<bool>(REL::RelocateMemberIfNewer<ObjectRefHandle>(SKSE::RUNTIME_SSE_1_6_629, this, 0x8C8, 0x8D0));
+			return static_cast<bool>(REL::RelocateMemberIfNewer<ObjectRefHandle>(SKSE::RUNTIME_SSE_1_6_629, this, 0x8C8, REL::VersionShift(0x8D0, kAE1799AddedEventSinkSize, SKSE::RUNTIME_SSE_1_7_99)));
 		}
 	}
 
