@@ -66,6 +66,16 @@ namespace RE
 		return func(this);
 	}
 
+	void InventoryChanges::InvalidateWeight()
+	{
+		constexpr float invalidWeight = -1.0F;
+		armorWeight = totalWeight;  // Previous total for the engine's weight-change notification.
+		totalWeight = invalidWeight;
+		if (auto actor = owner ? owner->As<Actor>() : nullptr) {
+			actor->GetActorRuntimeData().equippedWeight = invalidWeight;
+		}
+	}
+
 	std::uint16_t InventoryChanges::GetNextUniqueID()
 	{
 		using func_t = decltype(&InventoryChanges::GetNextUniqueID);

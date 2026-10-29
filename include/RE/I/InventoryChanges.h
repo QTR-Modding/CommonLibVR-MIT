@@ -54,6 +54,7 @@ namespace RE
 		void               GenerateLeveledListChanges();
 		TESObjectARMO*     GetArmorInSlot(std::int32_t a_slot);
 		float              GetInventoryWeight();
+		void               InvalidateWeight();
 		std::int16_t       GetItemCount(TESBoundObject* a_obj);
 		std::uint16_t      GetNextUniqueID();
 		std::uint32_t      GetWornMask();
