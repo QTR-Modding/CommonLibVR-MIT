@@ -2450,6 +2450,7 @@ set(SOURCES
 	src/RE/T/TESHavokUtilities.cpp
 	src/RE/T/TESHitEvent.cpp
 	src/RE/T/TESLeveledList.cpp
+	src/RE/T/TESModelTextureSwap.cpp
 	src/RE/T/TESNPC.cpp
 	src/RE/T/TESObjectARMA.cpp
 	src/RE/T/TESObjectARMO.cpp
