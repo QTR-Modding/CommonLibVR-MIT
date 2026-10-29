@@ -6,6 +6,8 @@
 
 namespace RE
 {
+	class NiAVObject;
+
 	class TESModelTextureSwap : public TESModel
 	{
 	public:
@@ -28,6 +30,9 @@ namespace RE
 		void                 ClearDataComponent() override;                     // 02
 		void                 CopyComponent(BaseFormComponent* a_rhs) override;  // 03
 		TESModelTextureSwap* GetAsModelTextureSwap() override;                  // 06 - { return this; }
+
+		// Apply to a private clone of the complete model to preserve geometry indices.
+		void ApplyAlternateTextures(NiAVObject* a_root);
 
 		// members
 		AlternateTexture* alternateTextures;     // 28 - MODS
