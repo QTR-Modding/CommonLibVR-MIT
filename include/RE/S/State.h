@@ -180,7 +180,9 @@ namespace RE
 				return nullptr;
 			}
 
-			RUNTIME_MEMBER_ACCESSOR_VERSIONED(RUNTIME_DATA, GetRuntimeData, SKSE::RUNTIME_SSE_1_6_629, 0x58, 0x60, 0x60);
+			inline static constexpr std::size_t kAE17104RuntimeDataShift = 0x10;
+
+			RUNTIME_MEMBER_ACCESSOR_VERSIONED(RUNTIME_DATA, GetRuntimeData, SKSE::RUNTIME_SSE_1_6_629, 0x58, 0x60, REL::VersionShift(0x60, kAE17104RuntimeDataShift, SKSE::RUNTIME_SSE_1_7_104));
 
 			[[nodiscard]] inline bool GetDoubleDynamicResolutionAdjustmentFrequency() noexcept
 			{
