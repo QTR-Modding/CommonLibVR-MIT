@@ -21,7 +21,10 @@ namespace RE
 		countDelta(a_rhs.countDelta)
 	{
 		if (a_rhs.extraLists) {
-			extraLists = new BSSimpleList<ExtraDataList*>(*a_rhs.extraLists);
+			extraLists = new BSSimpleList<ExtraDataList*>();
+			if (const auto* source = a_rhs.extraLists) {
+				*extraLists = *source;
+			}
 		}
 	}
 
@@ -33,15 +36,7 @@ namespace RE
 	InventoryEntryData& InventoryEntryData::operator=(const InventoryEntryData& a_rhs)
 	{
 		if (this != std::addressof(a_rhs)) {
-			object = a_rhs.object;
-
-			delete extraLists;
-			extraLists =
-				a_rhs.extraLists ?
-					new BSSimpleList<ExtraDataList*>(*a_rhs.extraLists) :
-					nullptr;
-
-			countDelta = a_rhs.countDelta;
+			*this = InventoryEntryData(a_rhs);
 		}
 		return *this;
 	}
